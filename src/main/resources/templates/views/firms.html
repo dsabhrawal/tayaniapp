@@ -1,0 +1,24 @@
+
+<div class="input-append">
+	<input style="width: 358px; margin-left: 100px;" class="span2" type="text" ng-model="firmName" required="required" min="1" />
+	<button class="btn btn-primary" ng-disabled="!firmName" ng-click="addNewFirm(firmName)">Add Firm</button>
+</div>
+
+<h3 style="margin-left: 100px;">Firms List</h3>
+<div class="alert alert-info" style="width: 400px; margin-left: 100px;" ng-show="firms.length == 0">No Firm found</div>
+<table class="table table-bordered table-striped" style="width: 450px; margin-left: 100px;" ng-show="firms.length > 0">
+	<thead>
+		<tr>
+			<th style="text-align: center; width: 25px;">Action</th>
+			<th style="text-align: center;">Firm Name</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="firm in firms">
+			<td style="width: 70px; text-align: center;"><button class="btn btn-mini btn-danger" ng-click="removeFirm(firm.id)">Remove</button></td>
+			<td>{{firm.name}}</td>
+		</tr>
+	</tbody>
+</table>
+<button style="margin-left: 100px;" class="btn btn-danger" ng-show="firms.length > 1" ng-click="removeAllFirms()">Remove
+	All Firms</button>
