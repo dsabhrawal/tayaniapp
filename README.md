@@ -1,1 +1,1 @@
-Run with Application.java
+Run the application with TayaniApp.java
