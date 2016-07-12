@@ -12,6 +12,9 @@ public class WebMvcConfig extends WebMvcAutoConfiguration.WebMvcAutoConfiguratio
 		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
 		registry.addResourceHandler("/views/**").addResourceLocations("classpath:/templates/views/");
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		registry.addResourceHandler("/bower_components/**").addResourceLocations("classpath:/bower_components/");
+		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/static/js/");
+		registry.addResourceHandler("/templates/**").addResourceLocations("classpath:/templates/");
 	}
 
 }

@@ -1,0 +1,33 @@
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Diesel Reports</h1>
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+	<div class="col-lg-6 col-sm-12" id="doughnut-chart">
+		<div class="panel panel-default">
+			<div class="panel-heading">Doughnut Chart</div>
+			<div class="panel-body">
+				<span> Total Inflow: {{totalInflow}}</span>
+				<br>
+				<span> Total Outflow: {{totalOutflow}}</span>
+				<canvas id="doughnut" class="chart chart-doughnut chart-xs" data="donut.data" labels="donut.labels" legend="false"></canvas>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-lg-6 col-sm-12" id="pie-chart">
+		<div class="panel panel-default">
+			<div class="panel-heading">Pie Chart</div>
+			<div class="panel-body">
+				<span> Total Inflow: {{totalInflow}}</span>
+				<br>
+				<span> Total Outflow: {{totalOutflow}}</span>
+				<canvas id="pie" class="chart chart-pie chart-xs" data="pie.data" labels="pie.labels"></canvas>
+			</div>
+		</div>
+	</div>
+
+</div>
