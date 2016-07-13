@@ -7,7 +7,7 @@
  *
  * Main module of the application.
  */
-angular
+var app = angular
   .module('tayaniApp', [
     'oc.lazyLoad',
     'ui.router',
@@ -212,5 +212,3 @@ angular
        url:'/grid'
    })
   }]);
-
-    
