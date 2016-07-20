@@ -1,8 +1,9 @@
 angular.module('tayaniApp').service('authService', function(){
 
 	  var user = {};
-	  user.role = 'mineUser';
-	  //user.role = 'officeUser';
+	  //user.role = 'mineUser';
+	 //user.role = 'officeUser';
+	  user.role = 'admin';
 	  return{
 	    getUser: function(){
 	      return user;
@@ -13,5 +14,4 @@ angular.module('tayaniApp').service('authService', function(){
 	    }
 	  }
 	});
-
 
