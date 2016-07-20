@@ -1,0 +1,223 @@
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Diesel Transactions</h1>
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">Transaction Details</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="alert alert-error" ng-show="error">{{errorMessage}}</div>
+
+						<form class="form-horizontal" id="dieselTransactionForm">
+							<fieldset>
+
+								<!-- Form Name -->
+								<legend>Place Deal</legend>
+
+								<div class="form-group">
+									<label class="col-md-4 control-label requiredField"
+										for="in_stock">In Stock </label>
+
+									<div class="col-md-6">
+										<b><span ng-bind="dieselInStock"></span></b>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 control-label requiredField"
+										for="optionsRadiosInline">Deal Type <span
+										class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<label class="radio-inline"> <input type="radio"
+											ng-model="dieselTransactionForm.dealTypeSelected"
+											name="optionsRadiosInline" id="radioOptionPurchase"
+											value="Purchase" checked>Purchase
+										</label> <label class="radio-inline"> <input type="radio"
+											ng-model="dieselTransactionForm.dealTypeSelected"
+											name="optionsRadiosInline" id="radioOptionSale" value="Sale">Sale
+										
+									</div>
+								</div>
+								<div class="form-group"
+									ng-show="dieselTransactionForm.dealTypeSelected == 'NONE'">
+									<label class="col-md-4 control-label requiredField">Party<span
+										class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<select class="form-control">
+											<option>Select</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group"
+									ng-show="dieselTransactionForm.dealTypeSelected == 'Purchase'">
+									<label class="col-md-4 control-label requiredField">Party<span
+										class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<select class="form-control"
+											ng-model="dieselTransactionForm.selectedCompany">
+											<option ng-repeat="dd in deaselDealers">{{dd.name}}</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group"
+									ng-show="dieselTransactionForm.dealTypeSelected == 'Sale'">
+									<label class="col-md-4 control-label requiredField">Party<span
+										class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<select class="form-control"
+											ng-model="dieselTransactionForm.selectedCompany">
+											<option ng-repeat="company in owners">{{company}}</option>
+										</select>
+									</div>
+								</div>
+								<!-- Vehicle Selection Start-->
+								<div class="form-group"
+									ng-show="dieselTransactionForm.dealTypeSelected == 'Sale'">
+									<label class="col-md-4 control-label requiredField"
+										for="vehicle_selected"> Vehicle No <span
+										class="asteriskField"> * </span></label>
+
+									<div class="col-md-6">
+										<div class="input-group">
+											<input id="vehicle_selected" name="vehicle selected"
+												class="form-control" type="text"
+												ng-model="dieselTransactionForm.selectedVehicle"
+												list="vehiclesList">
+											<datalist id="vehiclesList">
+												<option
+													ng-repeat="vehicle in vehicles | filter: {Owner : dieselTransactionForm.selectedCompany}"
+													value="{{vehicle.vehicleNumber}}"></option>
+											</datalist>
+										</div>
+									</div>
+								</div>
+
+								<!-- Vehicle Selection End. -->
+								<!-- Appended Input-->
+								<div class="form-group">
+									<label class="col-md-4 control-label requiredField"
+										for="diesel_quantity">Quantity <span
+										class="asteriskField"> * </span>
+									</label>
+
+									<div class="col-md-6">
+										<div class="input-group">
+											<input id="diesel_quantity" name="diesel_quantity"
+												class="form-control" placeholder="Quantity" type="number"
+												required="" ng-model="dieselTransactionForm.quantity"> <span
+												class="input-group-addon">Ltr</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group ">
+									<label class="col-md-4 control-label requiredField"
+										for="diesel_transaction_date"> Date <span
+										class="asteriskField"> * </span>
+									</label>
+
+									<div class="col-md-6">
+										<input class="form-control" id="diesel_transaction_date"
+											name="diesel_transaction_date" placeholder="MM/DD/YYYY"
+											type="date" ng-model="dieselTransactionForm.transactionDate" />
+									</div>
+
+								</div>
+							</fieldset>
+						</form>
+						<hr />
+						<div class="controls">
+						
+							<button type="button" class="btn btn-primary"
+								ng-disabled="!dieselTransactionForm.quantity || !dieselTransactionForm.transactionDate || !dieselTransactionForm.dealTypeSelected || !dieselTransactionForm.selectedCompany"
+								ng-hide="editMode" ng-click="saveDieselTransaction(dieselTransactionForm)">Add
+							</button>
+							
+
+							<button type="button" class="btn btn-primary"
+								ng-disabled="!dieselTransactionForm.quantity || !dieselTransactionForm.transactionDate || !dieselTransactionForm.dealTypeSelected || !dieselTransactionForm.selectedCompany"
+								ng-show="editMode" ng-click="updateDieselInflow(inflow)">Save
+							</button>
+							<button type="button" class="btn"
+								ng-click="resetDieselTransactionForm()">Reset</button>
+						</div>
+					</div>
+				</div>
+				<!-- /.col-lg-6 (nested) -->
+				<!-- /.row (nested) -->
+			</div>
+			<!-- /.panel-body -->
+		</div>
+		<!-- /.panel -->
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">Diesel Transactions</div>
+			<div class="panel-body">
+				<!-- INflow transactions  -->
+				<div class="row">
+
+					<div class="col-lg-12">
+						<!-- <legend> Diesel Inflow Transactions</legend>
+-->
+						<div class="alert alert-info"
+							ng-show="dieselTransactions.length == 0">No Record Found</div>
+						<div class="table-responsive">
+							<table class="table table-bordered table-striped table-hover"
+								ng-show="dieselTransactions.length > 0">
+								<thead>
+									<tr>
+										<th style="text-align: center; width: 25px;">Id</th>
+										<th style="text-align: center; width: 25px;">User</th>
+										<th style="text-align: center; width: 25px;">Deal Type</th>
+										<th style="text-align: center; width: 25px;">Company</th>
+										<th style="text-align: center; width: 25px;">Vehicle</th>
+										<th style="text-align: center; width: 25px;">Quantity</th>
+										<th style="text-align: center; width: 25px;">Price</th>
+										<th style="text-align: center; width: 25px;">Date</th>
+										<th style="text-align: center; width: 25px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="item in dieselTransactions | orderBy:predicate">
+										<td style="text-align: center;">{{item.id}}</td>
+										<td>{{item.user}}</td>
+										<td>{{item.dealType}}</td>
+										<td>{{item.company}}</td>
+										<td>{{item.vehicle}}</td>
+										<td>{{item.quantity}}</td>
+										<td>{{item.price}}</td>
+										<td>{{item.transactionDate}}</td>
+										<td style="width: 100px; text-align: center;">
+											<button class="btn btn-mini btn-danger"
+												ng-click="removeInflowTransaction(item)">Remove</button>
+											<button class="btn btn-mini btn-success"
+												ng-click="editInflowTransaction(item)">Edit</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<button class="btn btn-danger"
+								ng-show="inflowTransactions.length > 1"
+								ng-click="removeAllInflowTransactions()">Remove All
+								Transactions</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

@@ -167,6 +167,40 @@ var app = angular
                 }
             }
         })
+         .state('dashboard.diesel-transactions',{
+            templateUrl:'views/diesel/transactions.html',
+            url:'/diesel-transactions',
+            controller: 'DieselCtrl',
+            resolve: {
+                loadMyFiles:function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name:'tayaniApp',
+                        files:[
+                            'scripts/controllers/main.js',
+                            'scripts/controllers/dieselCtrl.js',
+                            'scripts/controllers/services.js'
+                        ]
+                    })
+                }
+            }
+        })
+        .state('dashboard.diesel-configuration',{
+            templateUrl:'views/diesel/config.html',
+            url:'/diesel-configuration',
+            controller: 'DieselCtrl',
+            resolve: {
+                loadMyFiles:function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name:'tayaniApp',
+                        files:[
+                            'scripts/controllers/main.js',
+                            'scripts/controllers/dieselCtrl.js',
+                            'scripts/controllers/services.js'
+                        ]
+                    })
+                }
+            }
+        })
         .state('dashboard.diesel-reports',{
             templateUrl:'views/diesel/reports.html',
             url:'/diesel-report',

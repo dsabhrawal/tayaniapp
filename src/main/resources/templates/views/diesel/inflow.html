@@ -24,7 +24,7 @@
 
                                 <!-- Text input-->
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label requiredField" for="Added_By">In Stock
+                                    <label class="col-md-4 control-label requiredField" for="in_stock">In Stock
                                      <span class="asteriskField">
                                         *
                                         </span>
@@ -34,7 +34,6 @@
                                        <b><span ng-bind="inStock" ></span></b>
                                     </div>
                                 </div>
-
                                 <!-- Appended Input-->
                                 <div class="form-group">
                                     <label class="col-md-4 control-label requiredField" for="diesel_quantity">Quantity
@@ -53,7 +52,7 @@
                                     </div>
                                 </div>
                                  <!-- Prepended text price field start-->
-                                <div class="form-group" restrict access="officeUser">
+                                <div class="form-group" restrict access="officeUser | admin">
                                     <label class="col-md-4 control-label requiredField" for="diesel_price">Price
                                      <span class="asteriskField">
                                         *
@@ -73,7 +72,7 @@
                                 
                                 <div class="form-group ">
                                     <label class="col-md-4 control-label requiredField" for="diesel_transaction_date">
-                                        DateTime
+                                        Date
                                         <span class="asteriskField">
                                         *
                                         </span>
