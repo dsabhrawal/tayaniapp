@@ -1,128 +1,262 @@
 'use strict';
 /**
- * @ngdoc function
  * @name tayaniApp.controller:MainCtrl
- * @description
- * # MainCtrl
  * Controller of the tayaniApp
  */
 
 angular.module('tayaniApp')
-	.controller('DieselCtrl', function($rootScope, $scope, $position, $http, dieselService, vehicleService) {
-	
-		$scope.dieselTransactionForm = {
+	.controller('DieselCtrl', function($rootScope, $scope, $position, $http, dieselService, TransportService, DieselConfig, FirmService, DealerService, DealTypeService, $timeout, toaster) {
+
+		$scope.init = function() {
+			$scope.dieselTransactionForm = {
 				dealTypeSelected : 'NONE',
-				selectedCompany: '',
-				selectedVehicle:'',
-				quantity:'',
-				transactionDate:''
-		}
-		$scope.dieselTransaction = {};
-		$scope.inflow = {};
-		$scope.editMode = false;
-		$scope.predicate = 'id';
-		$scope.inflowTransactions = [];
-		$rootScope.dieselInStock = '';
-		$scope.dealSelected = 'NONE';
-		
-		$rootScope.dieselInflowPrice = '45';
-		$rootScope.dieselOutflowPrice = '50';
-		
-		$scope.dieselTransactionForm = {
-				name : "deepak"
+				selectedCompany : '',
+				selectedVehicle : '',
+				quantity : '',
+				transactionDate : ''
+			}
+			$scope.dieselTransaction = {};
+			$scope.editMode = false;
+			$scope.predicate = 'id';
+			$scope.totalDieselInflow = 0;
+			$scope.totalDieselOutflow = 0;
+			$rootScope.dieselInStock = $scope.totalDieselInflow - $scope.totalDieselOutflow;
+			$scope.dealSelected = 'NONE';
+			$rootScope.loggedInUser = 'dsabhrawal';
+			$scope.firms = [];
+			$scope.vehicles = [];
+			$scope.deaselDealers = [];
 		}
 
-		$scope.deaselDealers = [ {
-			id : 1,
-			name : "BPL Ltd"
-		}, {
-			id : 2,
-			name : "NCP Limited"
+		$scope.getDieselInflow = function() {
+			dieselService.getTotalInflow(function(status, data) {
+				if (status === 200 && data != 'Error') {
+					$scope.totalDieselInflow = data;
+					$scope.getDieselOutflow();
+				}
+				else {
+					toaster.error("Couldn't get diesel inflow.");
+				}
+			});
 		}
-		];
+		
+		$scope.getDieselOutflow = function() {
+			dieselService.getTotalOutflow(function(status, data) {
+				if (status === 200 && data != 'Error') {
+					$scope.totalDieselOutflow = data;
+					$rootScope.dieselInStock = $scope.totalDieselInflow - $scope.totalDieselOutflow;
+				}
+				else {
+					toaster.error("Couldn't get diesel outflow.");
+				}
+			});
+		}
+		
+		$scope.getDieselDealers = function() {
+			DealerService.getAll(function(data, status) {
+				if (status === 200) {
+					console.log("Dealers data successfully fetched.");
+					$scope.deaselDealers = data;
+				}
+				else {
+					toaster.error("Couldn't get data!");
+				}
+			});
+		}
 
-		$scope.owners = vehicleService.getOwners();
-		$scope.vehicles = vehicleService.getVehicleData();
-		console.log($scope.vehicles);
-		
-		/* Diesel Price configuration start*/
-		
-		$scope.saveDieselPrices = function(dieselInflowPrice, dieselOutflowPrice){
-			console.log("diesel prices:::: "+ dieselInflowPrice  + "    "+ dieselOutflowPrice);
+		$scope.getAllFirms = function() {
+			FirmService.getAll(function(data, status) {
+				if (status === 200) {
+					console.log("Firms data successfully fetched.");
+					$scope.firms = data;
+				}
+				else {
+					toaster.error("Couldn't get data!");
+				}
+			});
 		}
-		$scope.resetDieselPrices = function(){
-			$scope.dieselInflowPrice = '';
-			$scope.dieselOutflowPrice = '';
+		$scope.getAllTransport = function() {
+			TransportService.getVehicleData(function(status, data) {
+				if (status === 200) {
+					console.log("Vehicles data successfully fetched.");
+					$scope.vehicles = data
+				}
+				else {
+					toaster.error("Couldn't get Data!");
+				}
+			});
 		}
-		
-		/* Diesel Price Configuration end*/
-		
-		$scope.fetchAllInflowTransactions = function() {
-			/* $http.get('/rest/orders').success(function(rsList){
-			 $scope.orders = rsList;
-			 });*/
-			$scope.inflowTransactions = dieselService.getInflowData();
-		};
-		
+
 		$scope.fetchDieselTransactions = function() {
-			/* $http.get('/rest/orders').success(function(rsList){
-			 $scope.orders = rsList;
-			 });*/
-			$scope.dieselTransactions = dieselService.getDieselTransaction();
-		};
-
-		$scope.saveDieselTransaction = function(dieselTransactionForm) {
-
-			$scope.resetError();
-
-			/*  $http.post('/rest/order/add', order).success(function() {
-			 $scope.fetchAllOrders();
-			 $scope.order.productName = '';
-			 $scope.order.buyer = '';
-			 $scope.order.quantity = '';
-			 $scope.order.delivered = false;
-			 $scope.order = {};
-			 }).error(function() {
-			 $scope.setError('Could not add a new order');
-			 });*/
-			dieselTransactionForm.id = '3';
-			dieselService.addDieselTransaction(dieselTransactionForm);
-			$scope.fetchAllInflowTransactions();
-			$scope.dieselTransactionForm = {};
 			
-			console.log("inflow.quantity    " + dieselTransactionForm.quantity);
-			console.log("inflow.transactionDate      " +dieselTransactionForm.transactionDate);
-			console.log("dealSelected   "+  dieselTransactionForm.dealTypeSelected);
-			console.log("selectedCompany     "+ dieselTransactionForm.selectedCompany);
-			console.log("selectedVehicle     " + dieselTransactionForm.selectedVehicle);
+				dieselService.getDieselTransactions(function(status, data){
+					if(status === 200){
+						$scope.dieselTransactions = data;
+						console.log(JSON.stringify(data));
+					}else{
+						$scope.setError("Couldn't fetch diesel transactions.");
+					}
+				});
+		};
+
+		$scope.fetchInitialData = function() {
+			$scope.getAllFirms();
+			$scope.getAllTransport();
+			$scope.getDieselDealers();
+			$scope.fetchDieselTransactions();
+		}
+
+
+		/********************************* DATA FETCHING AND INITIALIZATION DONE ***********************************************/
+
+		$scope.saveDieselTransaction = function(dieselTransactionForm, update) {
+
+			$scope.dieselTransactionTobeSaved = {
+				id : '',
+				quantity : dieselTransactionForm.quantity,
+				date : dieselTransactionForm.transactionDate,
+				dealType : {},
+				user : {
+					id : 1,
+					username : $rootScope.loggedInUser
+				}
+			};
 			
-		};
-
-		$scope.updateDieselInflow = function(inflow) {
+			if(update){
+				$scope.dieselTransactionTobeSaved.id = dieselTransactionForm.id;
+			}
+			console.log("Diesel Transaction to be saved." + JSON.stringify(dieselTransactionForm));
 			$scope.resetError();
 
-			/* $http.put('/rest/order/update', order).success(function() {
-			 $scope.fetchAllOrders();
-			 $scope.order.productName = '';
-			 $scope.order.buyer = '';
-			 $scope.order.quantity = '';
-			 $scope.order.delivered = false;
-			 $scope.editMode = false;
-			 $scope.order = {};
-			 }).error(function() {
-			 $scope.setError('Could not update the order');
-			 });*/
-			console.log("update done.");
-			$scope.inflow = {};
+			/* Getting logged in user details */
+
+			/*finding deal type object from service based on the deal type selected */
+			DealTypeService.getDealTypeByType(dieselTransactionForm.dealTypeSelected, function(status, data) {
+				if (status === 200) {
+					$scope.dieselTransactionTobeSaved.dealType = data;
+					$scope.getDieselConfiguration($scope.dieselTransactionTobeSaved.dealType);
+				}
+				else {
+					toaster.error("Couldn't add transaction!");
+				}
+			});
+
+			$scope.getDieselConfiguration = function(dealType) {
+				/* getting diesel configuration based on deal selected */
+				DieselConfig.getDieselConfigurationByDealType(dealType, function(status, data) {
+					if (status === 200) {
+						$scope.dieselTransactionTobeSaved.dieselConfiguration = data;
+						if (dieselTransactionForm.dealTypeSelected === 'PURCHASE') {
+							$scope.getDieselDealerAndSave();
+						}
+						else if (dieselTransactionForm.dealTypeSelected === 'SALE') {
+							if ($rootScope.dieselInStock - dieselTransactionForm.quantity < 0) {
+								$scope.setError("Not enough diesel in stock.");
+								$timeout(function() {
+									$scope.resetError();
+								}, 5000);
+								return;
+							}
+
+							$scope.getFirmsData();
+						}
+					}
+					else {
+						toaster.error("Couldn't add transaction!");
+					}
+				});
+			}
+
+			$scope.getFirmsData = function() {
+				/* Getting firm object from db */
+				FirmService.getFirmByName(dieselTransactionForm.selectedCompany, function(status, data) {
+					if (status === 200) {
+						$scope.dieselTransactionTobeSaved.firm = data;
+						$scope.getTransportDataAndSave();
+					}
+					else {
+						toaster.error("Couldn't add transaction!");
+					}
+				});
+			}
+
+			/* For Purchase transaction */
+			$scope.getDieselDealerAndSave = function() {
+				// getting dealer object from db
+				DealerService.getDealerByName(dieselTransactionForm.selectedCompany, function(status, data) {
+					if (status === 200) {
+						$scope.dieselTransactionTobeSaved.dieselDealer = data;
+						dieselService.addDieselTransaction($scope.dieselTransactionTobeSaved, function(status, data) {
+							if (status === 200 && data !== 'Error') {
+								$scope.setInfo("Diesel Transaction saved with Id:" + data);
+								$scope.getDieselInflow();
+								$scope.dieselTransactionForm = {};
+								$scope.fetchDieselTransactions();
+							}
+							else {
+								toaster.error("Couldn't update transaction!");
+							}
+						});
+					}
+					else {
+						toaster.error("Couldn't add transaction!");
+					}
+				});
+			}
+
+			/* For sale transaction */
+			$scope.getTransportDataAndSave = function() {
+				/* Getting selected vehicle object from db */
+				TransportService.getTransportByVehicleNo(dieselTransactionForm.selectedVehicle, function(status, data) {
+					if (status === 200) {
+						$scope.dieselTransactionTobeSaved.transport = data;
+						dieselService.addDieselTransaction($scope.dieselTransactionTobeSaved, function(status, data) {
+							if (status === 200 && data !== 'Error') {
+								$scope.setInfo("Diesel Transaction saved with Id:" + data);
+								$scope.getDieselInflow();
+								$scope.dieselTransactionForm = {};
+								$scope.fetchDieselTransactions();
+							}
+							else {
+								$scope.setError("Couldn't update transaction!");
+							}
+						});
+					}
+					else {
+						toaster.error("Couldn't add transaction!");
+					}
+				});
+			}
+
 		};
 
-		$scope.editInflowTransaction = function(inflow) {
+		/********************************* Save Transaction End **********************************************/
+
+		$scope.updateDieselTransaction = function(dieselTransaction) {
 			$scope.resetError();
-			$scope.inflow = inflow;
+			$scope.saveDieselTransaction(dieselTransaction, true);
+			$scope.resetDieselTransactionForm();
+		};
+
+
+		$scope.editDieselTransaction = function(dieselTransaction) {
+			$scope.resetError();
+			console.log(dieselTransaction);
+			$scope.dieselTransactionForm.id = dieselTransaction.id;
+			$scope.dieselTransactionForm.dealTypeSelected = dieselTransaction.dealType.type;
+			if('PURCHASE'=== dieselTransaction.dealType.type){
+				$scope.dieselTransactionForm.selectedCompany = dieselTransaction.dieselDealer.name;
+			}else{
+				$scope.dieselTransactionForm.selectedCompany = dieselTransaction.firm.name;
+				$scope.dieselTransactionForm.selectedVehicle = dieselTransaction.transport.vehicleNumber;
+			}
+			
+			$scope.dieselTransactionForm.quantity = dieselTransaction.quantity;
+			$scope.dieselTransactionForm.transactionDate = dieselTransaction.date;
 			$scope.editMode = true;
 		};
 
-		$scope.removeInflowTransaction = function(inflow) {
+		$scope.removeDieselTransaction = function(dieselTransaction) {
 			$scope.resetError();
 
 			/* $http.delete('/rest/order/remove/' + id).success(function() {
@@ -130,15 +264,16 @@ angular.module('tayaniApp')
 			 }).error(function() {
 			 $scope.setError('Could not remove order');
 			 });*/
-			var index = $scope.inflowTransactions.indexOf(inflow);
+			var index = $scope.dieselTransactions.indexOf(dieselTransaction);
 			console.log("index ... " + index);
 			if (index != -1) {
-				dieselService.removeInflow(index);
+				dieselService.removeDieselTransaction(index);
 			}
-			$scope.fetchAllInflowTransactions();
+			$rootScope.dieselInStock = dieselService.getDieselInStock();
+			$scope.fetchDieselTransactions();
 		};
 
-		$scope.removeAllInflowTransactions = function() {
+		$scope.removeAllDieselTransactions = function() {
 			$scope.resetError();
 
 			/*$http.delete('/rest/orders').success(function() {
@@ -146,8 +281,9 @@ angular.module('tayaniApp')
 			 }).error(function() {
 			 $scope.setError('Could not remove all orders');
 			 });*/
-			dieselService.removeAllInflow();
-			$scope.fetchAllInflowTransactions();
+			dieselService.removeAllDieselTransactions();
+			$rootScope.dieselInStock = dieselService.getDieselInStock();
+			$scope.fetchDieselTransactions();
 		};
 
 		$scope.resetDieselTransactionForm = function() {
@@ -166,144 +302,78 @@ angular.module('tayaniApp')
 			$scope.errorMessage = message;
 		};
 
-		$scope.fetchAllInflowTransactions();
-		$scope.fetchDieselTransactions();
-
-
-		/* Outflow journey */
-		$scope.outflow = {};
-		$scope.outflowTransactions = [];
-
-		$scope.fetchAllOutflowTransactions = function() {
-			/* $http.get('/rest/orders').success(function(rsList){
-			 $scope.orders = rsList;
-			 });*/
-			$scope.outflowTransactions = dieselService.getOutflowData();
+		$scope.setInfo = function(message) {
+			$scope.info = true;
+			$scope.infoMessage = message;
 		};
 
-		$scope.saveDieselOutflow = function(outflow) {
-
-			$scope.resetError();
-
-			/*  $http.post('/rest/order/add', order).success(function() {
-			 $scope.fetchAllOrders();
-			 $scope.order.productName = '';
-			 $scope.order.buyer = '';
-			 $scope.order.quantity = '';
-			 $scope.order.delivered = false;
-			 $scope.order = {};
-			 }).error(function() {
-			 $scope.setError('Could not add a new order');
-			 });*/
-
-			outflow.id = '3';
-			dieselService.addOutflow(outflow);
-			$scope.fetchAllOutflowTransactions();
-			$scope.outflow = {};
+		$scope.resetInfo = function(message) {
+			$scope.info = false;
+			$scope.infoMessage = '';
 		};
 
-		$scope.updateDieselOutflow = function(outflow) {
-			$scope.resetError();
+		$scope.init();
+		$scope.fetchInitialData();
+		$scope.getDieselInflow();
 
-			/* $http.put('/rest/order/update', order).success(function() {
-			 $scope.fetchAllOrders();
-			 $scope.order.productName = '';
-			 $scope.order.buyer = '';
-			 $scope.order.quantity = '';
-			 $scope.order.delivered = false;
-			 $scope.editMode = false;
-			 $scope.order = {};
-			 }).error(function() {
-			 $scope.setError('Could not update the order');
-			 });*/
-			console.log("update done.");
-			$scope.outflow = {};
-		};
+	}).controller('DieselReportController', function($rootScope, $scope, dieselService) {
 
-		$scope.editOutflowTransaction = function(outflow) {
-			$scope.resetError();
-			$scope.outflow = outflow;
-			$scope.editMode = true;
-		};
+	console.log("in stock:  " + $rootScope.dieselInStock);
+	console.log(Date.today());
+	/*$scope.donut = {
+		labels : [ "In Stock", "Tayani Consumption", "Third Party Consumption" ],
+		data : [ stock, tayaniConsumption, thirdPartyConsumption ]
+	};
 
-		$scope.removeOutflowTransaction = function(outflow) {
-			$scope.resetError();
+	$scope.pie = {
+		labels : [ "In Stock", "Tayani Consumption", "Third Party Consumption" ],
+		data : [ stock, tayaniConsumption, thirdPartyConsumption ]
+	};*/
 
-			/* $http.delete('/rest/order/remove/' + id).success(function() {
-			 $scope.fetchAllOrders();
-			 }).error(function() {
-			 $scope.setError('Could not remove order');
-			 });*/
-			var index = $scope.outflowTransactions.indexOf(outflow);
-			console.log("index ... " + index);
-			dieselService.removeOutflow(index);
-			$scope.fetchAllOutflowTransactions();
-		};
+	$scope.bar = {
+		labels : [ Date.today().toString('dd MMM'), Date.today().addDays(-1).toString('dd MMM'), Date.today().addDays(-2).toString('dd MMM'), Date.today().addDays(-3).toString('dd MMM'), Date.today().addDays(-4).toString('dd MMM'), Date.today().addDays(-5).toString('dd MMM'), Date.today().addDays(-6).toString('dd MMM') ],
+		series : [ 'Purchase', 'Sale' ],
 
-		$scope.removeAllOutflowTransactions = function() {
-			$scope.resetError();
+		data : [
+			[ 40, 59, 20, 40, 56, 55, 40 ],
+			[ 28, 48, 40, 19, 50, 27, 60 ]
+		]
+	};
+}).controller('DieselConfigCtrl', function($rootScope, $scope, DieselConfig, toaster) {
 
-			/*$http.delete('/rest/orders').success(function() {
-			 $scope.fetchAllOrders();
-			 }).error(function() {
-			 $scope.setError('Could not remove all orders');
-			 });*/
-			dieselService.removeAllOutflow();
-			$scope.fetchAllOutflowTransactions();
-		};
+	$scope.dieselConfiguration = [];
+	$scope.getDieselConfig = function() {
+		DieselConfig.getConfiguration(function(response) {
+			$scope.dieselConfiguration = response;
+			if (response.length === 0) {
+				toaster.error("Couldn't get data!");
+			}
+		});
+	}
 
-		$scope.resetDieselOutflowForm = function() {
-			$scope.resetError();
-			$scope.outflow = {};
-			$scope.editMode = false;
-		};
-
-		$scope.fetchAllOutflowTransactions();
-
-		/* Report section */
-
-		var totalInflow = 0;
-
-		for (var key in $scope.inflowTransactions) {
-			totalInflow += parseInt($scope.inflowTransactions[key].quantity);
-		}
-		;
-		$scope.totalInflow = totalInflow;
-		var totalOutflow = 0;
-
-		for (var key in $scope.outflowTransactions) {
-			totalOutflow += parseInt($scope.outflowTransactions[key].quantity);
-		}
-		;
-		$scope.totalOutflow = totalOutflow;
-		console.log("total outflow: " + totalOutflow);
-
-		var tayaniConsumption = 0;
-		var thirdPartyConsumption = 0;
-		for (var key in $scope.outflowTransactions) {
-			var obj = $scope.outflowTransactions[key];
-			if (obj.buyer === 'Tayani') {
-				tayaniConsumption += parseInt(obj.quantity);
+	/* Diesel Price configuration start*/
+	$scope.saveDieselConfiguration = function(dieselConfiguration) {
+		console.log("dieselConfiguration to be updated: " + JSON.stringify(dieselConfiguration))
+		DieselConfig.updateConfiguration(dieselConfiguration, function(response) {
+			console.log("success " + response);
+			if (response == 'true') {
+				$scope.getDieselConfig();
+				toaster.success({
+					title : "",
+					body : "Success!"
+				});
 			}
 			else {
-				thirdPartyConsumption += parseInt(obj.quantity);
+				console.error("couldn't update.");
+				toaster.error("Couldn't update!");
 			}
-		}
-		;
-		console.log("Tayani Consumption outflow: " + tayaniConsumption);
-		console.log("Third party Consumption outflow: " + thirdPartyConsumption);
+		});
 
-		var stock = totalInflow - totalOutflow;
-		$rootScope.dieselInStock = stock;
-		console.log("in stock:  " + $rootScope.dieselInStock);
-		$scope.donut = {
-			labels : [ "In Stock", "Tayani Consumption", "Third Party Consumption" ],
-			data : [ stock, tayaniConsumption, thirdPartyConsumption ]
-		};
+	}
+	$scope.resetDieselConfiguration = function() {
+		console.log("not functioning right now.");
+	}
 
-		$scope.pie = {
-			labels : [ "In Stock", "Tayani Consumption", "Third Party Consumption" ],
-			data : [ stock, tayaniConsumption, thirdPartyConsumption ]
-		};
-
-	});
+	$scope.getDieselConfig();
+/* Diesel Price Configuration end*/
+});

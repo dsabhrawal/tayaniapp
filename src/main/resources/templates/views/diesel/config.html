@@ -13,8 +13,8 @@
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="alert alert-error" ng-show="error">{{errorMessage}}</div>
-
-						<form class="form-horizontal">
+						<toaster-container toaster-options="{'time-out': 3000, 'close-button':true, 'animation-class': 'toast-top-center'}"></toaster-container>
+						<form class="form-horizontal" id="dieselConfiguration">
 							<fieldset>
 
 								<!-- Form Name -->
@@ -32,7 +32,7 @@
 											<span class="input-group-addon">Rs</span> <input
 												id="diesel_inflow_price" name="diesel_inflow_price" class="form-control"
 												placeholder="Price/ltr" type="text" required=""
-												ng-model="dieselInflowPrice">
+												ng-model="dieselConfiguration[1].price">
 										</div>
 									</div>
 								</div>
@@ -49,7 +49,7 @@
 											<span class="input-group-addon">Rs</span> <input
 												id="diesel_outflow_price" name="diesel_outflow_price" class="form-control"
 												placeholder="Price/ltr" type="text" required=""
-												ng-model="dieselOutflowPrice">
+												ng-model="dieselConfiguration[0].price">
 										</div>
 									</div>
 								</div>
@@ -59,12 +59,12 @@
 						<hr />
 						<div class="controls">
 							<button type="button" class="btn btn-primary"
-								ng-disabled="!dieselInflowPrice || !dieselOutflowPrice"
-								ng-click="saveDieselPrices(dieselInflowPrice, dieselOutflowPrice)">Save
+								ng-disabled="!dieselConfiguration[1].price || !dieselConfiguration[0].price"
+								ng-click="saveDieselConfiguration(dieselConfiguration)">Save
 							</button>
 
-							<button type="button" class="btn"
-								ng-click="resetDieselPrices()">Reset</button>
+							<button type="button" class="btn" disabled="true"
+								ng-click="resetDieselConfiguration()">Reset</button>
 						</div>
 					</div>
 				</div>
