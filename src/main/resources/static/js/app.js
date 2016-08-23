@@ -13,6 +13,7 @@ var app = angular
     'ui.router',
     'ui.bootstrap',
     'angular-loading-bar',
+    'toaster'
   ])
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     
@@ -133,7 +134,7 @@ var app = angular
           templateUrl:'views/ui-elements/panels-wells.html',
           url:'/panels-wells'
       })
-        .state('dashboard.diesel-inflow',{
+        /*.state('dashboard.diesel-inflow',{
             templateUrl:'views/diesel/inflow.html',
             url:'/diesel-inflow',
             controller: 'DieselCtrl',
@@ -149,8 +150,8 @@ var app = angular
                     })
                 }
             }
-        })
-        .state('dashboard.diesel-outflow',{
+        })*/
+        /*.state('dashboard.diesel-outflow',{
             templateUrl:'views/diesel/outflow.html',
             url:'/diesel-outflow',
             controller: 'DieselCtrl',
@@ -166,7 +167,7 @@ var app = angular
                     })
                 }
             }
-        })
+        })*/
          .state('dashboard.diesel-transactions',{
             templateUrl:'views/diesel/transactions.html',
             url:'/diesel-transactions',
@@ -187,7 +188,7 @@ var app = angular
         .state('dashboard.diesel-configuration',{
             templateUrl:'views/diesel/config.html',
             url:'/diesel-configuration',
-            controller: 'DieselCtrl',
+            controller: 'DieselConfigCtrl',
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
@@ -204,7 +205,7 @@ var app = angular
         .state('dashboard.diesel-reports',{
             templateUrl:'views/diesel/reports.html',
             url:'/diesel-report',
-            controller: 'DieselCtrl',
+            controller: 'DieselReportController',
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
