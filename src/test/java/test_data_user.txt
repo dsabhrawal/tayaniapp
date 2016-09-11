@@ -1,0 +1,9 @@
+http://localhost:8081/create?email=adi.rajurkar@gmail.com&name=Aditya%20Rajurkar
+http://localhost:8081/delete?id=4
+http://localhost:8081/get-by-email?email=deepak.sabhrawal@gmail.com
+http://localhost:8081/update?id=1&email=a@b.com&name=Kuch%20nahi
+
+http://localhost:8081/createUser?username=dsabhrawal&password=deepak&email=a@b.com&firstName=Deepak&lastName=Sabhrawal&role=admin
+http://localhost:8081/get-by-id?id=1
+
+http://localhost:8081/rest/api/diesel-price/create?price=52&dealTypeValue=PURCHASE

@@ -7,12 +7,13 @@
  *
  * Main module of the application.
  */
-angular
+var app = angular
   .module('tayaniApp', [
     'oc.lazyLoad',
     'ui.router',
     'ui.bootstrap',
     'angular-loading-bar',
+    'toaster'
   ])
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     
@@ -133,7 +134,7 @@ angular
           templateUrl:'views/ui-elements/panels-wells.html',
           url:'/panels-wells'
       })
-        .state('dashboard.diesel-inflow',{
+        /*.state('dashboard.diesel-inflow',{
             templateUrl:'views/diesel/inflow.html',
             url:'/diesel-inflow',
             controller: 'DieselCtrl',
@@ -149,11 +150,45 @@ angular
                     })
                 }
             }
-        })
-        .state('dashboard.diesel-outflow',{
+        })*/
+        /*.state('dashboard.diesel-outflow',{
             templateUrl:'views/diesel/outflow.html',
             url:'/diesel-outflow',
             controller: 'DieselCtrl',
+            resolve: {
+                loadMyFiles:function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name:'tayaniApp',
+                        files:[
+                            'scripts/controllers/main.js',
+                            'scripts/controllers/dieselCtrl.js',
+                            'scripts/controllers/services.js'
+                        ]
+                    })
+                }
+            }
+        })*/
+         .state('dashboard.diesel-transactions',{
+            templateUrl:'views/diesel/transactions.html',
+            url:'/diesel-transactions',
+            controller: 'DieselCtrl',
+            resolve: {
+                loadMyFiles:function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name:'tayaniApp',
+                        files:[
+                            'scripts/controllers/main.js',
+                            'scripts/controllers/dieselCtrl.js',
+                            'scripts/controllers/services.js'
+                        ]
+                    })
+                }
+            }
+        })
+        .state('dashboard.diesel-configuration',{
+            templateUrl:'views/diesel/config.html',
+            url:'/diesel-configuration',
+            controller: 'DieselConfigCtrl',
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
@@ -170,7 +205,7 @@ angular
         .state('dashboard.diesel-reports',{
             templateUrl:'views/diesel/reports.html',
             url:'/diesel-report',
-            controller: 'DieselCtrl',
+            controller: 'DieselReportController',
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
@@ -212,5 +247,3 @@ angular
        url:'/grid'
    })
   }]);
-
-    

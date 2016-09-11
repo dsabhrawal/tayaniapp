@@ -24,7 +24,7 @@
 
                                 <!-- Text input-->
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label requiredField" for="Added_By">In Stock
+                                    <label class="col-md-4 control-label requiredField" for="in_stock">In Stock
                                      <span class="asteriskField">
                                         *
                                         </span>
@@ -34,25 +34,6 @@
                                        <b><span ng-bind="inStock" ></span></b>
                                     </div>
                                 </div>
-
-                                <!-- Prepended text-->
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label requiredField" for="diesel_price">Price
-                                     <span class="asteriskField">
-                                        *
-                                        </span>
-                                    </label>
-
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">Rs</span>
-                                            <input id="diesel_price" name="diesel_price" class="form-control"
-                                                   placeholder="Price/ltr" type="text" required=""
-                                                   ng-model="inflow.price">
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- Appended Input-->
                                 <div class="form-group">
                                     <label class="col-md-4 control-label requiredField" for="diesel_quantity">Quantity
@@ -70,9 +51,28 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <!-- Prepended text price field start-->
+                                <div class="form-group" restrict access="officeUser | admin">
+                                    <label class="col-md-4 control-label requiredField" for="diesel_price">Price
+                                     <span class="asteriskField">
+                                        *
+                                        </span>
+                                    </label>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Rs</span>
+                                            <input id="diesel_price" name="diesel_price" class="form-control"
+                                                   placeholder="Price/ltr" type="text" required=""
+                                                   ng-model="inflow.price">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- price field end. -->
+                                
                                 <div class="form-group ">
                                     <label class="col-md-4 control-label requiredField" for="diesel_transaction_date">
-                                        DateTime
+                                        Date
                                         <span class="asteriskField">
                                         *
                                         </span>
@@ -81,7 +81,7 @@
                                     <div class="col-md-6">
                                         <input class="form-control" id="diesel_transaction_date"
                                                name="diesel_transaction_date" placeholder="MM/DD/YYYY"
-                                               type="datetime-local"
+                                               type="date"
                                                ng-model="inflow.transactionDate"/>
                                     </div>
 
@@ -91,7 +91,7 @@
                         <hr/>
                         <div class="controls">
                             <button type="button" class="btn btn-primary"
-                                    ng-disabled="!inflow.price || !inflow.quantity || !inflow.transactionDate"
+                                    ng-disabled="!inflow.quantity || !inflow.transactionDate"
                                     ng-hide="editMode"
                                     ng-click="saveDieselInflow(inflow)">Add
                             </button>

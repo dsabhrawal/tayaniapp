@@ -5,189 +5,236 @@
  * @description
  */
 var app = angular.module('tayaniApp');
-app.service('dieselService', function() {
-     var inflowData = [
-        {
-            id: '1',
-            buyer: 'Ekta',
-            quantity: 500,
-            price: 50,
-            transactionDate: '12/12/2016T10:20'
-        },
-        {
-            id: '2',
-            buyer: 'Deepak',
-            quantity: 500,
-            price: 50,
-            transactionDate: '12/06/2016T02:20'
-        }
-    ];
+app.service('dieselService', function($rootScope, DieselConfig, $http) {
 
-     var outflowData = [
-        {
-            id: '1',
-            buyer: 'Tayani',
-            quantity: 200,
-            price: 50,
-            transactionDate: '12/12/2016T10:20'
-        },
-        {
-            id: '2',
-            buyer: 'Okhal',
-            quantity: 300,
-            price: 50,
-            transactionDate: '12/06/2016T02:20'
-        }
-    ];
+	var addDieselTransaction = function(dieselTransaction, cbResult) {
 
-    var addInflow = function(inflow) {
-        inflowData.push(inflow);
-    };
+		console.log('inside service: ' + JSON.stringify(dieselTransaction));
+		var config = {
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}
 
-    var getInflowData = function(){
-        return inflowData;
-    };
+		$http.post('/rest/api/diesel-transaction/add', dieselTransaction, config).success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {});
 
-    var removeInflow = function(index){
-        inflowData.splice(index,1);
-    };
+	}
 
-    var removeAllInflow = function(){
-        inflowData = [];
-    };
+	var getDieselTransactions = function(cbResult) {
+		
+		$http.get("/rest/api/diesel-transaction/all").success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		});
+	}
 
-    var addOutflow = function(outflow) {
-        outflowData.push(outflow);
-    };
+	var removeDieselTransaction = function(index) {
+		dieselTransactionData.splice(index, 1);
+	};
 
-    var getOutflowData = function(){
-        return outflowData;
-    };
+	var removeAllDieselTransactions = function() {
+		dieselTransactionData = [];
+	};
 
-    var removeOutflow = function(index){
-        outflowData.splice(index,1);
-    };
+	var getDieselFormById = function(id) {
+		for (var i = 0; i < dieselTransactionData.length; i++) {
+			if (dieselTransactionData[i].id == id) {
+				return dieselTransactionData[i];
+			}
+		}
+	}
 
-    var removeAllOutflow = function(){
-        outflowData = [];
-    };
+	var getTotalInflow = function(cbResult) {
 
-    return {
-        addInflow: addInflow,
-        getInflowData: getInflowData,
-        removeInflow: removeInflow,
-        addOutflow: addOutflow,
-        getOutflowData: getOutflowData,
-        removeOutflow: removeOutflow,
-        removeAllInflow: removeAllInflow,
-        removeAllOutflow: removeAllOutflow
-    };
+		$http.get("/rest/api/diesel-transaction/total-inflow").success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		})
+		
+	}
+	
+	var getTotalOutflow = function(cbResult) {
+
+		$http.get("/rest/api/diesel-transaction/total-outflow").success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		})
+		
+	}
+
+	return {
+		addDieselTransaction : addDieselTransaction,
+		getDieselTransactions : getDieselTransactions,
+		removeAllDieselTransactions : removeAllDieselTransactions,
+		getTotalInflow : getTotalInflow,
+		getTotalOutflow : getTotalOutflow
+	};
 
 });
 
-app.service('vehicleService', function() {
-    var owners = {
-        tayani: 'Tayani Minerals',
-        ajita: 'Ajit Saria Mines and Minerals',
-        transporter: 'Transporter',
-        blastingContractor: 'Blasting Contractor'
-    }
-    var vehicleType = {
-        truck:'Truck',
-        tipper:'Tipper',
-        minivan: 'Minivan',
-        excavator: 'Excavator'
-    }
-    var company = {
-        tata:'Tata',
-        al: 'AshokLeyland',
-        lt:'L&T'
-    }
-    var model = {
-        prima :'Prima',
-        ape:'Ape',
-        ht:'HT-67'
-    }
+app.service('TransportService', function($http) {
 
-    var data = [
-        {
-            id: '1',
-            vehicleNumber: 'MH-29-VT-3468',
-            Owner: owners.tayani,
-            type: vehicleType.truck,
-            company: company.tata,
-            model: model.prima,
-            purchased: 'May-2010',
-            remarks: 'Used in transporting boulders'
-        },
-        {
-            id: '2',
-            vehicleNumber: 'MH-29-VT-3469',
-            Owner: owners.tayani,
-            type: vehicleType.minivan,
-            company: company.tata,
-            model: model.ape,
-            purchased: 'Jun-2009',
-            remarks: 'Used in transporting boulders'
-        },
-        {
-            id: '3',
-            vehicleNumber: 'MH-29-VT-4040',
-            Owner: owners.ajita,
-            type: vehicleType.truck,
-            company: company.tata,
-            model: model.prima,
-            purchased: 'Sep-2010',
-            remarks: 'Used in transporting boulders'
-        },
-        {
-            id: '4',
-            vehicleNumber: 'MH-29-VT-3434',
-            Owner: owners.ajita,
-            type: vehicleType.tipper,
-            company: company.al,
-            model: model.ht,
-            purchased: 'May-2012',
-            remarks: 'Used in transporting boulders'
-        },
-        {
-            id: '5',
-            vehicleNumber: 'MH-29-VT-2323',
-            Owner: owners.transporter,
-            type: vehicleType.truck,
-            company: company.tata,
-            model: model.prima,
-            purchased: '',
-            remarks: ''
-        },
-        {
-            id: '6',
-            vehicleNumber: 'MH-29-VT-4594',
-            Owner: owners.transporter,
-            type: vehicleType.tipper,
-            company: company.tata,
-            model: model.prima,
-            purchased: '',
-            remarks: ''
-        },
-        {
-            id: '7',
-            vehicleNumber: 'MH-29-VT-1232',
-            Owner: owners.blastingContractor,
-            type: vehicleType.excavator,
-            company: company.lt,
-            model: model.ht,
-            purchased: '',
-            remarks: ''
-        }
-    ];
+	var getVehicleData = function(cbResult) {
 
-    var getVehicleData = function () {
-        return data;
-    }
+		$http.get('/rest/api/transport/all-vehicles').success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		});
+	}
 
-    return {
-        getVehicleData: getVehicleData,
-    };
+	var findTransportByVehicleNo = function(vehicleNo, cbResult) {
+		var queryStringData = {
+			vehicleNumber : vehicleNo
+		};
+		var config = {
+			params : queryStringData,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}
+		$http.get('rest/api/transport/find-by-vehicleNo', config).success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {});
+	}
+	return {
+		getVehicleData : getVehicleData,
+		getTransportByVehicleNo : findTransportByVehicleNo
+	};
+
+});
+
+app.service('FirmService', function($http) {
+
+	var getAll = function(cbResult) {
+		$http.get("/rest/api/firm/all").success(function(data, status, headers, config) {
+			console.log("status of firm getall: " + status);
+			cbResult(data, status);
+		}).error(function(data, status, headers, config) {
+			cbResult(data, status);
+		});
+	}
+	var findByFirmName = function(firmName, cbResult) {
+		var queryStringData = {
+			name : firmName
+		};
+		var config = {
+			params : queryStringData,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}
+		$http.get('rest/api/firm/find-by-name', config).success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {});
+	}
+	return {
+		getAll : getAll,
+		getFirmByName : findByFirmName
+	}
+});
+
+app.service('DealerService', function($http) {
+
+	var getAll = function(cbResult) {
+		$http.get("/rest/api/diesel-dealer/all").success(function(data, status, headers, config) {
+			console.log("status of firm getall: " + status);
+			cbResult(data, status);
+		}).error(function(data, status, headers, config) {
+			cbResult(data, status);
+		});
+	}
+
+	var findByName = function(dealerName, cbResult) {
+		var queryStringData = {
+			name : dealerName
+		};
+		var config = {
+			params : queryStringData,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}
+		$http.get('rest/api/diesel-dealer/find-by-name', config).success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {});
+	}
+	return {
+		getAll : getAll,
+		getDealerByName : findByName
+	}
+});
+
+app.service('DealTypeService', function($http) {
+
+	var findBydType = function(dealType, cbResult) {
+		var queryStringData = {
+			type : dealType
+		};
+		var config = {
+			params : queryStringData,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}
+		$http.get('rest/api/dealtype/find-by-type', config).success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {});
+	}
+	return {
+		getDealTypeByType : findBydType
+	}
+});
+
+app.service('DieselConfig', function($http) {
+	var result;
+	var getConfiguration = function(cbResult) {
+
+		$http.get('/rest/api/diesel-conf/all').success(function(response) {
+			cbResult(response);
+		}).error(function() {
+			// $scope.setError('Could not update the Purchase configuration');
+		});
+	}
+	var updateConfiguration = function(dieselConfigurationToSave, cbResult) {
+
+		var config = {
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}
+		$http.post('/rest/api/diesel-conf/update', dieselConfigurationToSave, config).success(function(response) {
+			cbResult(response);
+		}).error(function() {
+			// $scope.setError('Could not update the Purchase configuration');
+		});
+	}
+
+	var findByDealType = function(dealType, cbResult) {
+		var queryStringData = {
+			id : dealType.id,
+			type : dealType.type
+		};
+		var config = {
+			params : queryStringData,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}
+		$http.get('rest/api/diesel-conf/find-by-dealType', config).success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {});
+	}
+
+	return {
+		getConfiguration : getConfiguration,
+		updateConfiguration : updateConfiguration,
+		getDieselConfigurationByDealType : findByDealType
+	}
 
 });

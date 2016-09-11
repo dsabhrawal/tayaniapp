@@ -1,0 +1,11 @@
+.bodycontainer {
+	max-height: 400px;
+	width: 100%;
+	margin: 0;
+	overflow: auto;
+}
+
+.table-scrollable {
+	margin: 0;
+	padding: 0;
+}

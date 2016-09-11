@@ -1,0 +1,79 @@
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Diesel Configuration</h1>
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">Price Configuration</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="alert alert-error" ng-show="error">{{errorMessage}}</div>
+						<toaster-container toaster-options="{'time-out': 3000, 'close-button':true, 'animation-class': 'toast-top-center'}"></toaster-container>
+						<form class="form-horizontal" id="dieselConfiguration">
+							<fieldset>
+
+								<!-- Form Name -->
+								<legend>Price Configuration</legend>
+								
+								<!-- Prepended text price field start-->
+								<div class="form-group" restrict access="officeUser | admin">
+									<label class="col-md-4 control-label requiredField"
+										for="diesel_inflow_price">Purchase Price <span class="asteriskField">
+											* </span>
+									</label>
+
+									<div class="col-md-6">
+										<div class="input-group">
+											<span class="input-group-addon">Rs</span> <input
+												id="diesel_inflow_price" name="diesel_inflow_price" class="form-control"
+												placeholder="Price/ltr" type="text" required=""
+												ng-model="dieselConfiguration[1].price">
+										</div>
+									</div>
+								</div>
+								<!-- price field end. -->
+								
+								<div class="form-group" restrict access="officeUser | admin">
+									<label class="col-md-4 control-label requiredField"
+										for="diesel_outflow_price">Sale Price <span class="asteriskField">
+											* </span>
+									</label>
+
+									<div class="col-md-6">
+										<div class="input-group">
+											<span class="input-group-addon">Rs</span> <input
+												id="diesel_outflow_price" name="diesel_outflow_price" class="form-control"
+												placeholder="Price/ltr" type="text" required=""
+												ng-model="dieselConfiguration[0].price">
+										</div>
+									</div>
+								</div>
+
+							</fieldset>
+						</form>
+						<hr />
+						<div class="controls">
+							<button type="button" class="btn btn-primary"
+								ng-disabled="!dieselConfiguration[1].price || !dieselConfiguration[0].price"
+								ng-click="saveDieselConfiguration(dieselConfiguration)">Save
+							</button>
+
+							<button type="button" class="btn" disabled="true"
+								ng-click="resetDieselConfiguration()">Reset</button>
+						</div>
+					</div>
+				</div>
+				<!-- /.col-lg-6 (nested) -->
+				<!-- /.row (nested) -->
+			</div>
+			<!-- /.panel-body -->
+		</div>
+		<!-- /.panel -->
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
