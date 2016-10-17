@@ -23,7 +23,7 @@ app.service('dieselService', function($rootScope, DieselConfig, $http) {
 	}
 
 	var getDieselTransactions = function(cbResult) {
-		
+
 		$http.get("/rest/api/diesel-transaction/all").success(function(data, status, headers, config) {
 			cbResult(status, data);
 		}).error(function(data, status, headers, config) {
@@ -31,33 +31,43 @@ app.service('dieselService', function($rootScope, DieselConfig, $http) {
 		});
 	}
 
-	var removeDieselTransaction = function(index) {
-		dieselTransactionData.splice(index, 1);
-	};
+	var removeDieselTransaction = function(transactionId, cbResult) {
 
-	var removeAllDieselTransactions = function() {
-		dieselTransactionData = [];
-	};
-
-	var getDieselFormById = function(id) {
-		for (var i = 0; i < dieselTransactionData.length; i++) {
-			if (dieselTransactionData[i].id == id) {
-				return dieselTransactionData[i];
+		var queryStringData = {
+			transactionId : transactionId
+		};
+		var config = {
+			params : queryStringData,
+			headers : {
+				'Content-Type' : 'application/json'
 			}
 		}
-	}
+		$http.delete('/rest/api/diesel-transaction/delete', config).success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		});
+	};
 
-	var getTotalInflow = function(cbResult) {
+	var removeAllDieselTransactions = function(cbResult) {
+		$http.delete('/rest/api/diesel-transaction/deleteAll').success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		});
+	};
 
-		$http.get("/rest/api/diesel-transaction/total-inflow").success(function(data, status, headers, config) {
+	var getTotalDieselFlowFortnightly = function(cbResult) {
+
+		$http.get("/rest/api/diesel-transaction/total-dieselflow-fortnightly").success(function(data, status, headers, config) {
 			cbResult(status, data);
 		}).error(function(data, status, headers, config) {
 			cbResult(status, data);
 		})
-		
+
 	}
-	
-	var getTotalOutflow = function(cbResult) {
+
+	/*var getTotalOutflow = function(cbResult) {
 
 		$http.get("/rest/api/diesel-transaction/total-outflow").success(function(data, status, headers, config) {
 			cbResult(status, data);
@@ -65,14 +75,31 @@ app.service('dieselService', function($rootScope, DieselConfig, $http) {
 			cbResult(status, data);
 		})
 		
+	}*/
+
+	var getTotalInflow = function(cbResult) {
+		$http.get("/rest/api/diesel-transaction/total-inflow").success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		})
 	}
 
+	var getTotalOutflow = function(cbResult) {
+		$http.get("/rest/api/diesel-transaction/total-outflow").success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		})
+	}
 	return {
 		addDieselTransaction : addDieselTransaction,
 		getDieselTransactions : getDieselTransactions,
+		removeDieselTransaction : removeDieselTransaction,
 		removeAllDieselTransactions : removeAllDieselTransactions,
 		getTotalInflow : getTotalInflow,
-		getTotalOutflow : getTotalOutflow
+		getTotalOutflow : getTotalOutflow,
+		getTotalDieselFlowFortnightly : getTotalDieselFlowFortnightly
 	};
 
 });

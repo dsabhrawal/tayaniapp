@@ -1,0 +1,30 @@
+{
+  "name": "tayaniapp",
+  "homepage": "https://github.com/dsabhrawal/tayaniapp",
+  "authors": [
+    "Deepak Sabhrawal <deepak.sabhrawal@gmail.com>"
+  ],
+  "description": "Tayani application",
+  "main": "app.js",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies":{
+				"angular": "latest",
+				"oclazyload" : "latest",
+				"angular-animate" : "latest",
+				"angular-bootstrap" : "latest",
+				"chart.js": "npm:chart.js#2.1.0",
+				"angular-chart.js" : "latest"
+  },
+  
+   "resolvers": [
+    "bower-npm-resolver"
+  ]
+}
