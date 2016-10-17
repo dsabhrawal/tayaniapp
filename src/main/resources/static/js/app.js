@@ -11,9 +11,11 @@ var app = angular
   .module('tayaniApp', [
     'oc.lazyLoad',
     'ui.router',
+    'ngAnimate', 'ngSanitize',
     'ui.bootstrap',
     'angular-loading-bar',
-    'toaster'
+    'toaster',
+    'anguFixedHeaderTable'
   ])
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     
@@ -103,7 +105,7 @@ var app = angular
         url:'/blank'
     })
       .state('login',{
-        templateUrl:'views/pages/login.html',
+        templateUrl:'views/auth/login.html',
         url:'/login'
     })
       .state('dashboard.chart',{
@@ -219,7 +221,31 @@ var app = angular
                         name:'tayaniApp',
                         files:[
                             'scripts/controllers/main.js',
-                            'scripts/controllers/dieselCtrl.js',
+                            'scripts/controllers/dieselReportsCtrl.js',
+                            'scripts/controllers/services.js'
+                        ]
+                    })
+                }
+            }
+        })
+        .state('dashboard.firm-use',{
+            templateUrl:'views/diesel/reports_firm_use.html',
+            url:'/firm-use',
+            controller: 'DieselReportController',
+            resolve: {
+                loadMyFiles:function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name:'chart.js',
+                        files:[
+                            'bower_components/angular-chart.js/dist/angular-chart.min.js',
+                            'bower_components/angular-chart.js/dist/angular-chart.css'
+                        ]
+                    }),
+                    $ocLazyLoad.load({
+                        name:'tayaniApp',
+                        files:[
+                            'scripts/controllers/main.js',
+                            'scripts/controllers/dieselReportsCtrl.js',
                             'scripts/controllers/services.js'
                         ]
                     })
