@@ -21,7 +21,7 @@
                 <a href="" ng-click="checkDiesel(2)"><i class="fa fa-fw"></i> Diesel<span
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" collapse="collapseVarDiesel!=2">
-                 	<li ui-sref-active="active" restrict access="admin | officeUser">
+                 	<li ui-sref-active="active" restrict access="admin | office">
                         <a ui-sref="dashboard.diesel-configuration"><i class="fa fa-wrench fa-fw"></i>Configuration</a>
                     </li>
                  	<li ui-sref-active="active">
@@ -30,7 +30,7 @@
                    <!--  <li ui-sref-active="active" restrict access="admin">
                         <a ui-sref="dashboard.diesel-reports"><i class="fa fa-bar-chart-o fa-fw"></i>Reports</a>
                     </li> -->
-                    <li ng-init="third=!third" ng-class="{active: multiCollapseVar==3}" ui-sref-active="active" restrict access="admin">
+                    <li ng-init="third=!third" ng-class="{active: multiCollapseVar==3}" ui-sref-active="active" restrict access="admin | office">
                         <a href="" ng-click="multiCheck(3)"> <i class="fa fa-bar-chart-o fa-fw"></i>Reports<span class="fa arrow"></span></a>
                         <ul class="nav nav-third-level" collapse="multiCollapseVar!=3">
                             <li>

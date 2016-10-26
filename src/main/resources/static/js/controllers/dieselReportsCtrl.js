@@ -5,7 +5,7 @@
  */
 
 angular.module('tayaniApp')
-	.controller('DieselReportController', function($rootScope, $scope, dieselService, toaster) {
+	.controller('DieselReportController',['$rootScope', '$scope', 'dieselReportsService', 'toaster', 'APP_CONSTANTS', '$log', function($rootScope, $scope, dieselReportsService, toaster, APP_CONSTANTS, $log) {
 
 	/*$scope.donut = {
 		labels : [ "In Stock", "Tayani Consumption", "Third Party Consumption" ],
@@ -16,36 +16,20 @@ angular.module('tayaniApp')
 		labels : [ "In Stock", "Tayani Consumption", "Third Party Consumption" ],
 		data : [ stock, tayaniConsumption, thirdPartyConsumption ]
 	};*/
-		$scope.dateFormat = 'dd MMM yyyy';
-		$scope.addLabels = function(){
-			$scope.lables.push(Date.today().toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-1).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-2).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-3).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-4).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-5).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-6).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-7).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-8).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-9).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-10).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-11).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-12).toString($scope.dateFormat));
-			$scope.lables.push(Date.today().addDays(-13).toString($scope.dateFormat));
-		}
-		
-		$scope.convertDate = function(date){
+	$log.log(APP_CONSTANTS.DATE_FORMAT);	
+	$scope.convertDate = function(date){
 			var d1 = Date.parse(date);
-			var d2 = d1.toString($scope.dateFormat);
+			var d2 = d1.toString(APP_CONSTANTS.DATE_FORMAT);
 			return d2;
 		}
-	$scope.lables = new Array();
-	$scope.purchaseData = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	$scope.saleData = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	
-	$scope.addLabels();
+	$scope.init = function(){
+		$scope.lables = dieselReportsService.labelsForteenDays();
+		$scope.purchaseData = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+		$scope.saleData = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	}
 	
-	var data = dieselService.getTotalDieselFlowFortnightly(function(status, data) {
+	var data = dieselReportsService.getTotalDieselFlowFortnightly(function(status, data) {
 		if (status === 200) {
 			   var transactions = JSON.parse(JSON.stringify(data));
 			   console.log("Transactions::: " + transactions);
@@ -74,4 +58,35 @@ angular.module('tayaniApp')
 			toaster.error("Couldn't get transaction!");
 		}
 	});
-});
+	$scope.init();
+}])
+.controller('DieselSaleFirmReportCtrl',['$scope', '$window', 'FirmService', 'APP_CONSTANTS', '$log', function($scope, $window, FirmService, APP_CONSTANTS, $log) { //controller for firm wise diesel sale report
+	$scope.firms = [];
+	$scope.getAllFirms = function() {
+		if ($window.sessionStorage["firms"]) {
+			$scope.firms = JSON.parse($window.sessionStorage["firms"]);
+		}else{
+		FirmService.getAll(function(data, status) {
+			if (status === 200) {
+				console.log("Firms data successfully fetched.");
+				$scope.firms = data;
+				$window.sessionStorage["firms"] = JSON.stringify(data);
+			} else {
+				toaster.error("Couldn't get data!");
+			}
+		});
+		}
+	}
+	
+	$scope.generateDieselSaleReportFirm = function(selectedFirm){
+		$log.log("firms selected to display transactions:: "+ selectedFirm);
+		/*var data = dieselReportsService.getTotalDieselFlowFortnightly(function(status, data) {
+		}*/
+	}
+
+	
+	$scope.init = function(){
+		$scope.getAllFirms();
+	}
+	$scope.init();
+}]);
