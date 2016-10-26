@@ -8,11 +8,10 @@ angular.module('tayaniApp').directive('restrict', function(authService) {
 		},
 		compile : function(element, attr, linker) {
 			var accessDenied = true;
-			var user = authService.getUser();
-
+			var currentUser = authService.getCurrentUser();
 			var attributes = attr.access.split(" ");
 			for (var i in attributes) {
-				if (user.role == attributes[i]) {
+				if (currentUser.role == attributes[i]) {
 					accessDenied = false;
 				}
 			}

@@ -5,7 +5,7 @@
  */
 
 angular.module('tayaniApp')
-	.controller('DieselCtrl', function($rootScope, $scope, $position, $http, dieselService, TransportService, DieselConfig, FirmService, DealerService, DealTypeService, $timeout, toaster) {
+	.controller('DieselCtrl', function($rootScope, $scope, $position, $http, dieselService, TransportService, DieselConfig, FirmService, DealerService, DealTypeService, $timeout, toaster, $window) {
 		
 		$scope.init = function() {
 			$scope.dieselTransactionForm = {
@@ -13,16 +13,17 @@ angular.module('tayaniApp')
 				selectedCompany : '',
 				selectedVehicle : '',
 				quantity : '',
+				price: '',
 				transactionDate : ''
 			}
 			$scope.dieselTransaction = {};
 			$scope.editMode = false;
-			$scope.predicate = 'id';
+			$scope.predicate = 'date';
 			$scope.totalDieselInflow = 0;
 			$scope.totalDieselOutflow = 0;
 			$rootScope.dieselInStock = $scope.totalDieselInflow - $scope.totalDieselOutflow;
 			$scope.dealSelected = 'NONE';
-			$rootScope.loggedInUser = 'dsabhrawal';
+			//$rootScope.loggedInUser = 'dsabhrawal';
 			$scope.firms = [];
 			$scope.vehicles = [];
 			$scope.deaselDealers = [];
@@ -72,14 +73,19 @@ angular.module('tayaniApp')
 		}
 
 		$scope.getAllFirms = function() {
+			if ($window.sessionStorage["firms"]) {
+				$scope.firms = JSON.parse($window.sessionStorage["firms"]);
+			}else{
 			FirmService.getAll(function(data, status) {
 				if (status === 200) {
 					console.log("Firms data successfully fetched.");
 					$scope.firms = data;
+					$window.sessionStorage["firms"] = JSON.stringify(data);
 				} else {
 					toaster.error("Couldn't get data!");
 				}
 			});
+			}
 		}
 		$scope.getAllTransport = function() {
 			TransportService.getVehicleData(function(status, data) {
@@ -119,6 +125,7 @@ angular.module('tayaniApp')
 			$scope.dieselTransactionTobeSaved = {
 				id : '',
 				quantity : dieselTransactionForm.quantity,
+				price : dieselTransactionForm.price,
 				date : dieselTransactionForm.transactionDate,
 				dealType : {},
 				user : {
@@ -135,16 +142,31 @@ angular.module('tayaniApp')
 
 			/* Getting logged in user details */
 
-			/*finding deal type object from service based on the deal type selected */
+			/*finding deal type object from service based on the deal type selected  and saving the transaction*/
 			DealTypeService.getDealTypeByType(dieselTransactionForm.dealTypeSelected, function(status, data) {
 				if (status === 200) {
 					$scope.dieselTransactionTobeSaved.dealType = data;
-					$scope.getDieselConfiguration($scope.dieselTransactionTobeSaved.dealType);
+				//	$scope.getDieselConfiguration($scope.dieselTransactionTobeSaved.dealType);
+					
+					if (dieselTransactionForm.dealTypeSelected === 'PURCHASE') {
+						$scope.getDieselDealerAndSave();
+					} else if (dieselTransactionForm.dealTypeSelected === 'SALE') {
+						if ($rootScope.dieselInStock - dieselTransactionForm.quantity < 0) {
+							$scope.setError("Not enough diesel in stock.");
+							$timeout(function() {
+								$scope.resetError();
+							}, 5000);
+							return;
+						}
+
+						$scope.getFirmsData();
+					}
 				} else {
 					toaster.error("Couldn't add transaction!");
 				}
 			});
 
+			/* Currently not using as requirement changed.*/
 			$scope.getDieselConfiguration = function(dealType) {
 				/* getting diesel configuration based on deal selected */
 				DieselConfig.getDieselConfigurationByDealType(dealType, function(status, data) {
@@ -250,6 +272,7 @@ angular.module('tayaniApp')
 
 			$scope.dieselTransactionForm.quantity = dieselTransaction.quantity;
 			$scope.dieselTransactionForm.transactionDate = dieselTransaction.date;
+			$scope.dieselTransactionForm.price = dieselTransaction.price;
 			$scope.editMode = true;
 		};
 
@@ -351,4 +374,9 @@ angular.module('tayaniApp')
 
 	$scope.getDieselConfig();
 /* Diesel Price Configuration end*/
-});
+}).filter('reverse', function() {
+	  return function(items) {
+		    if(items)
+		    return items.slice().reverse();
+		  };
+		});;

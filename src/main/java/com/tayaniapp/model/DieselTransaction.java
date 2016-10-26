@@ -1,5 +1,6 @@
 package com.tayaniapp.model;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import javax.persistence.Entity;
@@ -18,21 +19,19 @@ public class DieselTransaction {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	@NotNull
-	@OneToOne//(cascade = CascadeType.MERGE)
+	@OneToOne // (cascade = CascadeType.MERGE)
 	private User user;
 	@NotNull
 	private int quantity;
 	@NotNull
-	@OneToOne//(cascade = CascadeType.MERGE)
+	@OneToOne // (cascade = CascadeType.MERGE)
 	private DealType dealType;
-	@NotNull
-	@OneToOne//(cascade = CascadeType.MERGE)
-	private DieselConfiguration dieselConfiguration;
-	@OneToOne//(cascade = CascadeType.MERGE)
+	private BigDecimal price = new BigDecimal("0");
+	@OneToOne // (cascade = CascadeType.MERGE)
 	private Firm firm;
-	@OneToOne//(cascade = CascadeType.MERGE)
+	@OneToOne // (cascade = CascadeType.MERGE)
 	private DieselDealer dieselDealer;
-	@OneToOne//(cascade = CascadeType.MERGE)
+	@OneToOne // (cascade = CascadeType.MERGE)
 	private Transport transport;
 	@NotNull
 	private Date date;
@@ -69,12 +68,12 @@ public class DieselTransaction {
 		this.dealType = dealType;
 	}
 
-	public DieselConfiguration getDieselConfiguration() {
-		return dieselConfiguration;
+	public BigDecimal getPrice() {
+		return price;
 	}
 
-	public void setDieselConfiguration(DieselConfiguration dieselConfiguration) {
-		this.dieselConfiguration = dieselConfiguration;
+	public void setPrice(BigDecimal dieselPrice) {
+		this.price = dieselPrice;
 	}
 
 	public Firm getFirm() {
@@ -112,8 +111,8 @@ public class DieselTransaction {
 	@Override
 	public String toString() {
 		return "DieselTransaction [id=" + id + ", user=" + user + ", quantity=" + quantity + ", dealType=" + dealType
-				+ ", dieselConfiguration=" + dieselConfiguration + ", firm=" + firm + ", dieselDealer=" + dieselDealer
-				+ ", transport=" + transport + ", date=" + date + "]";
+				+ ", price=" + price + ", firm=" + firm + ", dieselDealer=" + dieselDealer + ", transport="
+				+ transport + ", date=" + date + "]";
 	}
 
 }

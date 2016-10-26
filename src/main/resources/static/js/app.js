@@ -27,9 +27,32 @@ var app = angular
     $urlRouterProvider.otherwise('/login');
 
     $stateProvider
-      .state('dashboard', {
+    .state('login', {
+      url: '/login',
+      templateUrl: 'templates/views/auth/login.html',
+      controller: 'LoginCtrl',
+      data: {
+          requireLogin: false
+        },
+      resolve: {
+          loadMyFiles:function($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name:'tayaniApp',
+              files:[
+                     'scripts/controllers/main.js',
+                     'scripts/controllers/authentication.js',
+                     'scripts/controllers/services.js'
+              ]
+            })
+          }
+        }
+    })
+     .state('dashboard', {
         url:'/dashboard',
         templateUrl: 'templates/views/dashboard/main.html',
+        data: {
+            requireLogin: true
+          },
         resolve: {
             loadMyDirectives:function($ocLazyLoad){
                 return $ocLazyLoad.load(
@@ -81,6 +104,9 @@ var app = angular
         url:'/home',
         controller: 'MainCtrl',
         templateUrl:'views/dashboard/home.html',
+        data: {
+            requireLogin: true
+          },
         resolve: {
           loadMyFiles:function($ocLazyLoad) {
             return $ocLazyLoad.load({
@@ -104,10 +130,10 @@ var app = angular
         templateUrl:'views/pages/blank.html',
         url:'/blank'
     })
-      .state('login',{
+  /*    .state('login',{
         templateUrl:'views/auth/login.html',
         url:'/login'
-    })
+    })*/
       .state('dashboard.chart',{
         templateUrl:'views/chart.html',
         url:'/chart',
@@ -174,6 +200,9 @@ var app = angular
             templateUrl:'views/diesel/transactions.html',
             url:'/diesel-transactions',
             controller: 'DieselCtrl',
+            data: {
+                requireLogin: true
+              },
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
@@ -191,6 +220,9 @@ var app = angular
             templateUrl:'views/diesel/config.html',
             url:'/diesel-configuration',
             controller: 'DieselConfigCtrl',
+            data: {
+                requireLogin: true
+              },
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
@@ -208,6 +240,9 @@ var app = angular
             templateUrl:'views/diesel/reports.html',
             url:'/diesel-report',
             controller: 'DieselReportController',
+            data: {
+                requireLogin: true
+              },
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
@@ -231,7 +266,10 @@ var app = angular
         .state('dashboard.firm-use',{
             templateUrl:'views/diesel/reports_firm_use.html',
             url:'/firm-use',
-            controller: 'DieselReportController',
+            controller: 'DieselSaleFirmReportCtrl',
+            data: {
+                requireLogin: true
+              },
             resolve: {
                 loadMyFiles:function($ocLazyLoad) {
                     return $ocLazyLoad.load({
@@ -272,4 +310,24 @@ var app = angular
        templateUrl:'views/ui-elements/grid.html',
        url:'/grid'
    })
-  }]);
+  }])
+  .constant('APP_CONSTANTS', {
+	  DATE_FORMAT : 'dd MMM yyyy'
+  })
+  .run(function ($rootScope, authService) {
+
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+	 console.log(toState);
+	 var currentUser = authService.getCurrentUser();
+	/* if ($window.sessionStorage["currentUser"]) {
+		 currentUser = JSON.parse($window.sessionStorage["currentUser"]);
+	}*/
+    var requireLogin = toState.data.requireLogin;
+    console.log(currentUser);
+    console.log(requireLogin);
+    if (requireLogin && (typeof currentUser === 'undefined' || currentUser == null)) {
+      event.preventDefault();
+      // get me a login modal!
+    }
+  });
+});
