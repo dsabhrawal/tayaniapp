@@ -57,16 +57,6 @@ app.service('dieselService', function($rootScope, DieselConfig, $http) {
 		});
 	};
 
-	var getTotalDieselFlowFortnightly = function(cbResult) {
-
-		$http.get("/rest/api/diesel-transaction/total-dieselflow-fortnightly").success(function(data, status, headers, config) {
-			cbResult(status, data);
-		}).error(function(data, status, headers, config) {
-			cbResult(status, data);
-		})
-
-	}
-
 	/*var getTotalOutflow = function(cbResult) {
 
 		$http.get("/rest/api/diesel-transaction/total-outflow").success(function(data, status, headers, config) {
@@ -98,8 +88,7 @@ app.service('dieselService', function($rootScope, DieselConfig, $http) {
 		removeDieselTransaction : removeDieselTransaction,
 		removeAllDieselTransactions : removeAllDieselTransactions,
 		getTotalInflow : getTotalInflow,
-		getTotalOutflow : getTotalOutflow,
-		getTotalDieselFlowFortnightly : getTotalDieselFlowFortnightly
+		getTotalOutflow : getTotalOutflow
 	};
 
 });
@@ -265,3 +254,43 @@ app.service('DieselConfig', function($http) {
 	}
 
 });
+
+//diesel reports services.
+app.service('dieselReportsService', ['$http', 'APP_CONSTANTS', function($http, APP_CONSTANTS){
+	
+	var dateFormat = APP_CONSTANTS.DATE_FORMAT;
+	var labelsForteenDays = function(){
+	     var lables = new Array();
+		lables.push(Date.today().toString(dateFormat));
+		lables.push(Date.today().addDays(-1).toString(dateFormat));
+		lables.push(Date.today().addDays(-2).toString(dateFormat));
+		lables.push(Date.today().addDays(-3).toString(dateFormat));
+		lables.push(Date.today().addDays(-4).toString(dateFormat));
+		lables.push(Date.today().addDays(-5).toString(dateFormat));
+		lables.push(Date.today().addDays(-6).toString(dateFormat));
+		lables.push(Date.today().addDays(-7).toString(dateFormat));
+		lables.push(Date.today().addDays(-8).toString(dateFormat));
+		lables.push(Date.today().addDays(-9).toString(dateFormat));
+		lables.push(Date.today().addDays(-10).toString(dateFormat));
+		lables.push(Date.today().addDays(-11).toString(dateFormat));
+		lables.push(Date.today().addDays(-12).toString(dateFormat));
+		lables.push(Date.today().addDays(-13).toString(dateFormat));
+		return lables;
+	}
+	
+	var getTotalDieselFlowFortnightly = function(cbResult) {
+
+		$http.get("/rest/api/diesel-transaction/total-dieselflow-fortnightly").success(function(data, status, headers, config) {
+			cbResult(status, data);
+		}).error(function(data, status, headers, config) {
+			cbResult(status, data);
+		})
+
+	}
+	
+	return {
+		getTotalDieselFlowFortnightly : getTotalDieselFlowFortnightly,
+		labelsForteenDays : labelsForteenDays
+	}
+	
+}]);
