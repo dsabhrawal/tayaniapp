@@ -50,14 +50,16 @@
 			<div class="panel-heading">Firm Wise Usages Report</div>
 			<div class="panel-body">
 				<div class="row">
-					<div class="form-horizontal" id="dieselSaleFirmReportForm"
-						name="dieselFirmReportInputForm">
+					<div class="form-horizontal" id="dieselSaleReportForm"
+						name="dieselReportInputForm">
 						<div class="form-group">
 							<label class="col-md-2 control-label requiredField">Party<span
 								class="asteriskField"> * </span>
 							</label>
 							<div class="col-md-3">
-								<select class="form-control" ng-model="dieselSaleFirmReportForm.selectedFirm" ng-change="generateDieselSaleReportFirm(dieselSaleFirmReportForm.selectedFirm)">
+								<select class="form-control"
+									ng-model="dieselSaleReportForm.selectedFirm"
+									ng-change="generateDieselSaleFortnightlyReport(dieselSaleReportForm.selectedFirm, 'FIRM')">
 									<option ng-repeat="company in firms">{{company.name}}</option>
 								</select>
 							</div>
@@ -71,9 +73,10 @@
 							<div class="col-md-3">
 								<select id="vehicle_selected" name="vehicle selected"
 									class="form-control"
-									ng-model="dieselSaleFirmReportForm.selectedVehicle">
+									ng-model="dieselSaleReportForm.selectedVehicle"
+									ng-change="generateDieselSaleFortnightlyReport(dieselSaleReportForm.selectedVehicle, 'VEHICLE')">
 									<option
-										ng-repeat="vehicle in vehicles | filter:{firm : dieselTransactionForm.selectedCompany}">{{vehicle.vehicleNumber}}</option>
+										ng-repeat="vehicle in vehicles | filter:{firm : dieselSaleReportForm.selectedFirm}">{{vehicle.vehicleNumber}}</option>
 								</select>
 							</div>
 						</div>
@@ -83,6 +86,12 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="panel-body">
+				<canvas id="bar" class="chart chart-bar" data="bar.data"
+					labels="bar.labels" series="bar.series" options="bar.options"></canvas>
+			</div>
+
 		</div>
 	</div>
 </div>

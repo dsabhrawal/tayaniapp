@@ -5,7 +5,7 @@
  * @description
  */
 var app = angular.module('tayaniApp');
-app.service('dieselService', function($rootScope, DieselConfig, $http) {
+app.service('dieselService',['$rootScope', 'DieselConfig', '$http', 'APP_CONSTANTS', function($rootScope, DieselConfig, $http, APP_CONSTANTS) {
 
 	var addDieselTransaction = function(dieselTransaction, cbResult) {
 
@@ -56,16 +56,33 @@ app.service('dieselService', function($rootScope, DieselConfig, $http) {
 			cbResult(status, data);
 		});
 	};
-
-	/*var getTotalOutflow = function(cbResult) {
-
-		$http.get("/rest/api/diesel-transaction/total-outflow").success(function(data, status, headers, config) {
-			cbResult(status, data);
-		}).error(function(data, status, headers, config) {
-			cbResult(status, data);
-		})
+	
+	var updateDieselTransactions = function(updateTransactionForm, cbResult){
 		
-	}*/
+		var dates = updateTransactionForm.dates.split(' - ');
+		var startDate = new Date(dates[0]).toString(APP_CONSTANTS.INPUT_DATE_FORMAT);
+		var endDate = new Date(dates[1]).toString(APP_CONSTANTS.INPUT_DATE_FORMAT);
+		console.log(startDate);
+		console.log(endDate);
+		var data = {
+				dealType : updateTransactionForm.dealTypeSelected,
+				firmName : updateTransactionForm.selectedCompany,
+				price : updateTransactionForm.price,
+				fromDate : startDate,
+				toDate : endDate
+		}
+		
+		var config = {
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}
+			$http.post('/rest/api/diesel-transaction/update', JSON.stringify(data),config).success(function(data, status, headers, config) {
+				cbResult(status, data);
+			}).error(function(data, status, headers, config) {
+				cbResult(status, data);
+			});
+	}
 
 	var getTotalInflow = function(cbResult) {
 		$http.get("/rest/api/diesel-transaction/total-inflow").success(function(data, status, headers, config) {
@@ -82,26 +99,37 @@ app.service('dieselService', function($rootScope, DieselConfig, $http) {
 			cbResult(status, data);
 		})
 	}
+	
 	return {
 		addDieselTransaction : addDieselTransaction,
 		getDieselTransactions : getDieselTransactions,
 		removeDieselTransaction : removeDieselTransaction,
 		removeAllDieselTransactions : removeAllDieselTransactions,
 		getTotalInflow : getTotalInflow,
-		getTotalOutflow : getTotalOutflow
+		getTotalOutflow : getTotalOutflow,
+		updateDieselTransactions : updateDieselTransactions
 	};
 
-});
+}]);
 
-app.service('TransportService', function($http) {
+app.service('TransportService',['$http', '$window', function($http, $window) {
 
 	var getVehicleData = function(cbResult) {
 
+		if ($window.sessionStorage["VEHICLES"]) {
+			var data = JSON.parse($window.sessionStorage["VEHICLES"]);
+			return cbResult(200, data);
+		}else{
+			
 		$http.get('/rest/api/transport/all-vehicles').success(function(data, status, headers, config) {
+			if(status === 200){
+				$window.sessionStorage["VEHICLES"] = JSON.stringify(data);
+			}
 			cbResult(status, data);
 		}).error(function(data, status, headers, config) {
 			cbResult(status, data);
 		});
+		}
 	}
 
 	var findTransportByVehicleNo = function(vehicleNo, cbResult) {
@@ -123,17 +151,28 @@ app.service('TransportService', function($http) {
 		getTransportByVehicleNo : findTransportByVehicleNo
 	};
 
-});
+}]);
 
-app.service('FirmService', function($http) {
+app.service('FirmService', function($http, $window) {
 
 	var getAll = function(cbResult) {
+		
+		if ($window.sessionStorage["firms"]) {
+			var data = JSON.parse($window.sessionStorage["firms"]);
+			return cbResult(data, 200);
+		}else{
 		$http.get("/rest/api/firm/all").success(function(data, status, headers, config) {
 			console.log("status of firm getall: " + status);
+			
+			if (status === 200) {
+				console.log("Firms data successfully fetched.");
+				$window.sessionStorage["firms"] = JSON.stringify(data);
+			}
 			cbResult(data, status);
 		}).error(function(data, status, headers, config) {
 			cbResult(data, status);
 		});
+	   }
 	}
 	var findByFirmName = function(firmName, cbResult) {
 		var queryStringData = {
@@ -255,7 +294,7 @@ app.service('DieselConfig', function($http) {
 
 });
 
-//diesel reports services.
+// diesel reports services.
 app.service('dieselReportsService', ['$http', 'APP_CONSTANTS', function($http, APP_CONSTANTS){
 	
 	var dateFormat = APP_CONSTANTS.DATE_FORMAT;
@@ -280,7 +319,7 @@ app.service('dieselReportsService', ['$http', 'APP_CONSTANTS', function($http, A
 	
 	var getTotalDieselFlowFortnightly = function(cbResult) {
 
-		$http.get("/rest/api/diesel-transaction/total-dieselflow-fortnightly").success(function(data, status, headers, config) {
+		$http.get("/rest/api/diesel-reports/total-dieselflow-fortnightly").success(function(data, status, headers, config) {
 			cbResult(status, data);
 		}).error(function(data, status, headers, config) {
 			cbResult(status, data);
@@ -288,8 +327,27 @@ app.service('dieselReportsService', ['$http', 'APP_CONSTANTS', function($http, A
 
 	}
 	
+	var dieselSaleFortnightlyReport = function(requestParam, scope, cbResult){
+		var queryStringData = {
+				data: requestParam,
+				scope: scope
+		}
+		
+		var config = {
+				params : queryStringData,
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}
+			$http.get('rest/api/diesel-reports/fortnightly', config).success(function(data, status, headers, config) {
+				cbResult(data, status);
+			}).error(function(data, status, headers, config) {});
+		
+	}
+	
 	return {
 		getTotalDieselFlowFortnightly : getTotalDieselFlowFortnightly,
+		dieselSaleFortnightlyReport : dieselSaleFortnightlyReport,
 		labelsForteenDays : labelsForteenDays
 	}
 	

@@ -27,21 +27,24 @@
                  	<li ui-sref-active="active">
                         <a ui-sref="dashboard.diesel-transactions"><i class="fa fa-edit fa-fw"></i>Transactions</a>
                     </li>
-                   <!--  <li ui-sref-active="active" restrict access="admin">
+                    <li ui-sref-active="active" restrict access="admin | office">
                         <a ui-sref="dashboard.diesel-reports"><i class="fa fa-bar-chart-o fa-fw"></i>Reports</a>
-                    </li> -->
-                    <li ng-init="third=!third" ng-class="{active: multiCollapseVar==3}" ui-sref-active="active" restrict access="admin | office">
+                    </li>
+                   <!--  <li ng-init="third=!third" ng-class="{active: multiCollapseVar==3}" ui-sref-active="active" restrict access="admin | office">
                         <a href="" ng-click="multiCheck(3)"> <i class="fa fa-bar-chart-o fa-fw"></i>Reports<span class="fa arrow"></span></a>
                         <ul class="nav nav-third-level" collapse="multiCollapseVar!=3">
                             <li>
-                                <a ui-sref="dashboard.diesel-reports"><!-- <i class="fa fa-bar-chart-o fa-fw"> </i>-->Inflow/Outflow</a>
+                                <a ui-sref="dashboard.diesel-flow-report"><i class="fa fa-bar-chart-o fa-fw"> </i>Inflow/Outflow</a>
                             </li>
                             <li>
-                            	<a ui-sref="dashboard.firm-use"><!-- <i class="fa fa-bar-chart-o fa-fw"> </i>-->Firm Usages</a>
+                            	<a ui-sref="dashboard.diesel-firm-usages"><i class="fa fa-bar-chart-o fa-fw"> </i>Firm Usages</a>
+                            </li>
+                            <li>
+                            	<a ui-sref="dashboard.diesel-reports"><i class="fa fa-bar-chart-o fa-fw"> </i>Tabbed Reports</a>
                             </li>
 	                        </ul>
-                        <!-- /.nav-third-level -->
-                    </li>
+                        /.nav-third-level
+                    </li> -->
 
                 </ul>
                 <!-- /.nav-second-level -->
