@@ -4,54 +4,72 @@
 	</div>
 	<!-- /.col-lg-12 -->
 </div>
-<!-- /.row -->
-<!-- <div class="row">
-	<div class="col-lg-6 col-sm-12" id="doughnut-chart">
-		<div class="panel panel-default">
-			<div class="panel-heading">Doughnut Chart</div>
-			<div class="panel-body">
-				<span> Total Inflow: {{totalInflow}}</span>
-				<br>
-				<span> Total Outflow: {{totalOutflow}}</span>
-				<canvas id="doughnut" class="chart chart-doughnut chart-xs" data="donut.data" labels="donut.labels" legend="false"></canvas>
-			</div>
-		</div>
-	</div>
 
-	<div class="col-lg-6 col-sm-12" id="pie-chart">
+<div class="row" id="diesel_flow">
+	<div class="col-lg-12 col-sm-12">
 		<div class="panel panel-default">
-			<div class="panel-heading">Pie Chart</div>
-			<div class="panel-body">
-				<span> Total Inflow: {{totalInflow}}</span>
-				<br>
-				<span> Total Outflow: {{totalOutflow}}</span>
-				<canvas id="pie" class="chart chart-pie chart-xs" data="pie.data" labels="pie.labels"></canvas>
+			<div class="panel-heading">
+				<ui class="nav nav-pills">
+					<li ng-class="{'active': activeTab == 1}"><a href="" data-toggle="tab" ng-click="setActiveTab(1)">Total Flow</a></li>
+					<li ng-class="{'active': activeTab == 2}"><a href="" data-toggle="tab" ng-click="setActiveTab(2)">Firm/Vehicle Usages</a></li>
+				</ui>
 			</div>
-		</div>
-	</div>
+			<!-- Panel body for diesel flow reprot -->
+			<div class="panel-body" ng-show="activeTab == 1">
+				<div class="row">
+					<div class="col-lg-12 col-sm-12" id="bar-chart">
+						<!-- <div class="panel panel-default">
+								<div class="panel-heading">Purchase/Sale Report</div> -->
+							<canvas id="bar" class="chart chart-bar" data="bar.data"
+									labels="bar.labels" series="bar.series" options="bar.options"></canvas>
+						<!-- </div> -->
+					</div>
+				</div>
+			</div>
+			
+			<!-- Panel body for firms and vehicle reports -->
+			<div class="panel-body" ng-show="activeTab == 2">
+				<div class="row">
+					<div class="form-horizontal" id="dieselSaleReportForm"
+						name="dieselReportInputForm">
+						<div class="form-group">
+							<label class="col-md-2 control-label requiredField">Party<span
+								class="asteriskField"> * </span>
+							</label>
+							<div class="col-md-3">
+								<select class="form-control"
+									ng-model="dieselSaleReportForm.selectedFirm"
+									ng-change="generateDieselSaleFortnightlyReport(dieselSaleReportForm.selectedFirm, 'FIRM')">
+									<option ng-repeat="company in firms">{{company.name}}</option>
+								</select>
+							</div>
+						</div>
 
-</div> -->
-<!-- <div class="row">
-	<div class="col-lg-16 col-sm-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">Select Range</div>
-			<div class="panel-body">
-				<input type="daterange" ng-model="myDateRange" min-date="2013-09-10"
-					max-date="2013-09-25" limit="3 days" format="L" separator="/"
-					ranges="{'Special Range':{'startDate': '2013-09-2', 'endDate': '2013-09-5'}}" />
-			</div>
-		</div>
+						<div class="form-group">
+							<label class="col-md-2 control-label requiredField"
+								for="vehicle_selected"> Vehicle No <span
+								class="asteriskField"> * </span></label>
 
-	</div>
-</div> -->
-<div class="row">
-	<div class="col-lg-12 col-sm-12" id="bar-chart">
-		<div class="panel panel-default">
-			<div class="panel-heading">Purchase/Sale Report</div>
-			<div class="panel-body">
-				<canvas id="bar" class="chart chart-bar" data="bar.data"
-					labels="bar.labels" series="bar.series" options="bar.options"></canvas>
+							<div class="col-md-3">
+								<select id="vehicle_selected" name="vehicle selected"
+									class="form-control"
+									ng-model="dieselSaleReportForm.selectedVehicle"
+									ng-change="generateDieselSaleFortnightlyReport(dieselSaleReportForm.selectedVehicle, 'VEHICLE')">
+									<option
+										ng-repeat="vehicle in vehicles | filter:{firm : dieselSaleReportForm.selectedFirm}">{{vehicle.vehicleNumber}}</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- <canvas id="bar" class="chart chart-bar" data="bar.data"
+					labels="bar.labels" series="bar.series" options="bar.options"></canvas> -->
+					</div>
+				</div>
+				<canvas id="barFirmVehicle" class="chart chart-bar" data="barFirmVehicle.data"
+								labels="barFirmVehicle.labels" series="barFirmVehicle.series" options="barFirmVehicle.options"></canvas>
 			</div>
+			<!-- end------ -->
+			
 		</div>
 	</div>
 </div>
