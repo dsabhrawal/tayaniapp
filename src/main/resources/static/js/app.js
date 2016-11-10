@@ -15,7 +15,7 @@ var app = angular
     'ui.bootstrap',
     'angular-loading-bar',
     'toaster',
-    'anguFixedHeaderTable'
+    'anguFixedHeaderTable', 'ngBootstrap.dateRangePicker'
   ])
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     
@@ -236,9 +236,9 @@ var app = angular
                 }
             }
         })
-        .state('dashboard.diesel-reports',{
+          .state('dashboard.diesel-reports',{
             templateUrl:'views/diesel/reports.html',
-            url:'/diesel-report',
+            url:'/diesel-reports',
             controller: 'DieselReportController',
             data: {
                 requireLogin: true
@@ -263,9 +263,36 @@ var app = angular
                 }
             }
         })
-        .state('dashboard.firm-use',{
-            templateUrl:'views/diesel/reports_firm_use.html',
-            url:'/firm-use',
+        .state('dashboard.diesel-flow-report',{
+            templateUrl:'views/diesel/reports_diesel_flow.html',
+            url:'/diesel-flow',
+            controller: 'DieselReportController',
+            data: {
+                requireLogin: true
+              },
+            resolve: {
+                loadMyFiles:function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name:'chart.js',
+                        files:[
+                            'bower_components/angular-chart.js/dist/angular-chart.min.js',
+                            'bower_components/angular-chart.js/dist/angular-chart.css'
+                        ]
+                    }),
+                    $ocLazyLoad.load({
+                        name:'tayaniApp',
+                        files:[
+                            'scripts/controllers/main.js',
+                            'scripts/controllers/dieselReportsCtrl.js',
+                            'scripts/controllers/services.js'
+                        ]
+                    })
+                }
+            }
+        })
+        .state('dashboard.diesel-firm-usages',{
+            templateUrl:'views/diesel/reports_firm_usages.html',
+            url:'/diesel-firm-usages',
             controller: 'DieselSaleFirmReportCtrl',
             data: {
                 requireLogin: true
@@ -312,21 +339,22 @@ var app = angular
    })
   }])
   .constant('APP_CONSTANTS', {
-	  DATE_FORMAT : 'dd MMM yyyy'
+	  DATE_FORMAT : 'dd MMM yyyy',
+	  INPUT_DATE_FORMAT : 'yyyy-MM-dd'
   })
-  .run(function ($rootScope, authService) {
-
+  .run(function ($rootScope, authService, $window, $templateCache) {
+	
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
 	 console.log(toState);
 	 var currentUser = authService.getCurrentUser();
-	/* if ($window.sessionStorage["currentUser"]) {
+	 if ($window.sessionStorage["currentUser"]) {
 		 currentUser = JSON.parse($window.sessionStorage["currentUser"]);
-	}*/
+	}
     var requireLogin = toState.data.requireLogin;
     console.log(currentUser);
     console.log(requireLogin);
     if (requireLogin && (typeof currentUser === 'undefined' || currentUser == null)) {
-      event.preventDefault();
+    	event.preventDefault();
       // get me a login modal!
     }
   });

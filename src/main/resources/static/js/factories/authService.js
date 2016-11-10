@@ -1,14 +1,16 @@
 angular.module('tayaniApp').service('authService', function($rootScope, $window){
 
-	  var user = {};
-	  //user.role = 'mineUser';
-	  user.username = '';
-	  user.role = '';
+	var user = {
+			  id : '',
+			  username : '',
+			  role:''
+	  }
 	  
 	  var getCurrentUser = function(){
 		   var currentUser = null;
 			 if ($window.sessionStorage["currentUser"]) {
 				 currentUser = JSON.parse($window.sessionStorage["currentUser"]);
+				 console.log(currentUser);
 			}
 		  return currentUser;
 	  }
@@ -18,6 +20,7 @@ angular.module('tayaniApp').service('authService', function($rootScope, $window)
 			   user.username = 'dsabhrawal';
 				$rootScope.loggedInUser = user.username;
 				user.role = 'admin';
+				user.id = 1;
 				$window.sessionStorage["currentUser"] = JSON.stringify(user);
 				console.log("done");
 				logged = true;
@@ -27,6 +30,7 @@ angular.module('tayaniApp').service('authService', function($rootScope, $window)
 				 user.username = 'aditya';
 				 $rootScope.loggedInUser = user.username;
 				user.role = 'mineuser';
+				user.id = 2;
 				$window.sessionStorage["currentUser"] = JSON.stringify(user);
 				console.log("done");
 				logged = true;
@@ -35,7 +39,7 @@ angular.module('tayaniApp').service('authService', function($rootScope, $window)
 	  }
 	  
 	  var logout = function(){
-		  user = {username:'', role:''};
+		  user = {id:'', username:'', role:''};
 		  $rootScope.loggedInUser = null;
 		  $window.sessionStorage["currentUser"] = null;
 		  console.log("loggedout");
