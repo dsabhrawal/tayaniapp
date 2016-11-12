@@ -10,6 +10,7 @@ angular
 				function($rootScope, $scope, $position, $http, dieselService, TransportService, DieselConfig, FirmService, DealerService, DealTypeService, $timeout, toaster, $window, $log, APP_CONSTANTS, authService) {
 
 					$scope.init = function() {
+						$scope.APP_CONSTANTS = APP_CONSTANTS;
 						$scope.dieselTransactionForm = {
 							dealTypeSelected : 'NONE',
 							selectedCompany : '',
@@ -36,7 +37,6 @@ angular
 						$scope.vehicles = [];
 						$scope.deaselDealers = [];
 						$scope.activeTab = 0;
-						$scope.format = 'dd-MM-yyyy';
 						
 						$scope.ranges = {
 								'Today': [moment(), moment()],
@@ -359,6 +359,7 @@ angular
 						$scope.dieselTransactionForm.transactionDate = dieselTransaction.date;
 						$scope.dieselTransactionForm.price = dieselTransaction.price;
 						$scope.editMode = true;
+						$scope.activeTab= APP_CONSTANTS.DIESEL_NEW_TRN_TAB;
 						$scope.showAddTransactionPanel();
 					};
 

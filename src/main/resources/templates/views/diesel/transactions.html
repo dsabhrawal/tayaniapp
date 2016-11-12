@@ -19,7 +19,7 @@
 				</ui>
 			</div>
 			<!-- New Transaction panel body -->
-			<div class="panel-body" ng-show="activeTab == 1">
+			<div class="panel-body" ng-show="activeTab == APP_CONSTANTS.DIESEL_NEW_TRN_TAB">
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="alert alert-danger fade in" ng-show="error">
@@ -163,7 +163,7 @@
 										</label>
 										<div class="col-md-6">
 											<div class="input-group">
-          										<input type="text" id="diesel_transaction_date" class="form-control" datepicker-popup="{{format}}" ng-model="dieselTransactionForm.transactionDate" is-open="newTranDatePicker.isNewTranDatePickerOpen" datepicker-options="dateOptions" ng-required="true" close-text="Close">
+          										<input type="text" id="diesel_transaction_date" class="form-control" placeholder="{{APP_CONSTANTS.DIESEL_TRN_DATE_FRMT}}"  datepicker-popup="{{APP_CONSTANTS.DIESEL_TRN_DATE_FRMT}}" ng-model="dieselTransactionForm.transactionDate" is-open="newTranDatePicker.isNewTranDatePickerOpen" datepicker-options="dateOptions" ng-required="true" close-text="Close" ng-click="newTranDatePickerToggle($event)">
           										<span class="input-group-btn">
             										<button type="button" class="btn btn-default" ng-click="newTranDatePickerToggle($event)"><i class="glyphicon glyphicon-calendar"></i></button>
           										</span>
@@ -199,7 +199,7 @@
 			
 			<!-- Panel body for Update transaction form -->
 			
-			<div class="panel-body" ng-show="activeTab == 2">
+			<div class="panel-body" ng-show="activeTab == APP_CONSTANTS.DIESEL_UPDATE_TRN_TAB">
 				<div class="row">
 					<div class="col-lg-6">
 						<div>
@@ -284,7 +284,7 @@
 										</label>
 
       									<div class="col-md-6">
-          										<input ng-daterange type="daterange" id="updateTran_from_date" class="form-control" ng-model="updateTransactionForm.dates" ranges="ranges"/>
+          										<input ng-daterange type="daterange" id="updateTran_from_date" class="form-control" ng-model="updateTransactionForm.dates" format="{{APP_CONSTANTS.DIESEL_TRN_DATE_FRMT}}" ranges="ranges"/>
       									</div>
 									</div>
 							</fieldset>
