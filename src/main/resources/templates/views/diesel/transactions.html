@@ -8,8 +8,18 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
-			<div class="panel-heading">Transaction Details</div>
-			<div class="panel-body">
+			<div class="panel-heading">
+				<ui class="nav nav-pills" restrict access="admin | office">
+					<li ng-class="{'active': activeTab == 1}"><a href="" data-toggle="tab" ng-click="setActiveTab(1)">New Transaction</a></li>
+					<li ng-class="{'active': activeTab == 2}"><a href="" data-toggle="tab" ng-click="setActiveTab(2)">Update Transactions</a></li>
+				</ui>
+				
+				<ui class="nav nav-pills" restrict access="mineuser">
+					<li ng-class="{'active': activeTab == 1}"><a href="" data-toggle="tab" ng-click="setActiveTab(1)">New Transaction</a></li>
+				</ui>
+			</div>
+			<!-- New Transaction panel body -->
+			<div class="panel-body" ng-show="activeTab == 1">
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="alert alert-danger fade in" ng-show="error">
@@ -22,7 +32,7 @@
 						</div>
 						<div>
 							<toaster-container
-								toaster-options="{'time-out':500000, 'close-button':true, 'animation-class': 'toast-top-right'}"></toaster-container>
+								toaster-options="{'time-out':5000, 'close-button':true, 'animation-class': 'toast-top-right'}"></toaster-container>
 						</div>
 						<form class="form-horizontal" id="dieselTransactionForm" name="dieselTransactionForm">
 							<fieldset>
@@ -55,7 +65,7 @@
 									</div>
 								</div>
 								<div class="form-group"
-									ng-show="dieselTransactionForm.dealTypeSelected == 'NONE'">
+									ng-show="dieselTransactionForm.dealTypeSelected === NONE">
 									<label class="col-md-4 control-label requiredField">Party<span
 										class="asteriskField"> * </span>
 									</label>
@@ -151,13 +161,14 @@
 											for="diesel_transaction_date"> Date <span
 											class="asteriskField"> * </span>
 										</label>
-
 										<div class="col-md-6">
-											<input class="form-control" id="diesel_transaction_date"
-												name="diesel_transaction_date" placeholder="MM/DD/YYYY"
-												type="date" ng-model="dieselTransactionForm.transactionDate" />
-										</div>
-
+											<div class="input-group">
+          										<input type="text" id="diesel_transaction_date" class="form-control" datepicker-popup="{{format}}" ng-model="dieselTransactionForm.transactionDate" is-open="newTranDatePicker.isNewTranDatePickerOpen" datepicker-options="dateOptions" ng-required="true" close-text="Close">
+          										<span class="input-group-btn">
+            										<button type="button" class="btn btn-default" ng-click="newTranDatePickerToggle($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          										</span>
+          									</div>
+      									</div>
 									</div>
 							</fieldset>
 						</form>
@@ -185,15 +196,128 @@
 				<!-- /.row (nested) -->
 			</div>
 			<!-- /.panel-body -->
+			
+			<!-- Panel body for Update transaction form -->
+			
+			<div class="panel-body" ng-show="activeTab == 2">
+				<div class="row">
+					<div class="col-lg-6">
+						<div>
+							<toaster-container toaster-options="{'time-out':5000, 'close-button':true, 'animation-class': 'toast-top-right', 'toaster-id' : 1}"></toaster-container>
+						</div>
+						<form class="form-horizontal" id="updateTransactionForm" name="updateTransactionForm">
+							<fieldset>
+								<!-- Form Name -->
+								<legend>Update Deal</legend>
+								<div class="form-group">
+									<label class="col-md-4 control-label requiredField" for="updateTransactionRadiosInline">
+									Deal Type 
+									<span class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<label class="radio-inline"> <input type="radio"
+											ng-model="updateTransactionForm.dealTypeSelected"
+											name="updateTransactionRadiosInline" id="updateTransactionOptionPurchase"
+											value="PURCHASE" checked>Purchase
+										</label> <label class="radio-inline"> <input type="radio"
+											ng-model="updateTransactionForm.dealTypeSelected"
+											name="updateTransactionRadioInline" id="updateTransactionOptionSale" value="SALE">Sale
+									</div>
+								</div>
+								<div class="form-group"
+									ng-show="updateTransactionForm.dealTypeSelected === NONE">
+									<label class="col-md-4 control-label requiredField">Party<span
+										class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<select class="form-control">
+											<option>Select</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group"
+									ng-show="updateTransactionForm.dealTypeSelected == 'PURCHASE'">
+									<label class="col-md-4 control-label requiredField">Party<span
+										class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<select class="form-control"
+											ng-model="updateTransactionForm.selectedCompany">
+											<option ng-repeat="dd in deaselDealers">{{dd.name}}</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group"
+									ng-show="updateTransactionForm.dealTypeSelected == 'SALE'">
+									<label class="col-md-4 control-label requiredField">Party<span
+										class="asteriskField"> * </span>
+									</label>
+									<div class="col-md-6">
+										<select class="form-control"
+											ng-model="updateTransactionForm.selectedCompany">
+											<option ng-repeat="company in firms">{{company.name}}</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 control-label requiredField"
+										for="updateTran_diesel_price">Price <span
+										class="asteriskField"> * </span>
+									</label>
+
+									<div class="col-md-6">
+										<div class="input-group">
+											<span class="input-group-addon">Rs.</span>
+											<input id="updateTran_diesel_price" name="updateTran_diesel_price"
+												class="form-control" placeholder="Price/Ltr" type="number" min="0.00" step="0.01" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+												required="" ng-model="updateTransactionForm.price">
+										</div>
+										<div>
+											<span class="alert alert-danger" ng-show="udpateTransactionForm.updateTran_diesel_price.$error.pattern">Enter valid price!</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+										<label class="col-md-4 control-label requiredField"
+											for="updateTran_from_date"> Period <span
+											class="asteriskField"> * </span>
+										</label>
+
+      									<div class="col-md-6">
+          										<input ng-daterange type="daterange" id="updateTran_from_date" class="form-control" ng-model="updateTransactionForm.dates" ranges="ranges"/>
+      									</div>
+									</div>
+							</fieldset>
+						</form>
+						<hr />
+						<div class="controls">
+
+							<button type="button" class="btn btn-primary"
+								ng-disabled="!updateTransactionForm.dates || !updateTransactionForm.dealTypeSelected || !updateTransactionForm.selectedCompany || !updateTransactionForm.price"
+								ng-click="updateDieselTransactionForm(updateTransactionForm)">Update
+							</button>
+
+							<button type="button" class="btn"
+								ng-click="resetUpdateTransactionForm()">Reset</button>
+						</div>
+					</div>
+				</div>
+				<!-- /.col-lg-6 (nested) -->
+				<!-- /.row (nested) -->
+			</div>
+			
+			<!-- Update transaction form panel end -->
 		</div>
 		<!-- /.panel -->
 	</div>
 	<!-- /.col-lg-12 -->
 </div>
+
+
 <div class="row" restrict access="admin | office">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
-			<div class="panel-heading">Diesel Transactions</div>
+			<div class="panel-heading">Detailed Transactions</div>
 			<div class="panel-body">
 				<!-- INflow transactions  -->
 				<div class="row">

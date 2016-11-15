@@ -1,6 +1,6 @@
 package com.tayaniapp.repository;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,14 +21,14 @@ public interface DieselTransactionRepository extends CrudRepository<DieselTransa
 	@Modifying
 	@Query("DELETE FROM DieselTransaction")
 	void deleteAll();
-
-	@Query(value = "select date, sum(quantity), deal_type from diesel_transaction WHERE date >= DATE_ADD(CURDATE(), INTERVAL -13 DAY) GROUP BY date,deal_type", nativeQuery = true)
-	List<Object[]> getTotalDieselFlowFortnightly();
-
-	/*
-	 * @Query("SELECT SUM(quantity) FROM DieselTransaction where dealType = 2")
-	 * Integer getTotalDieselOutflow();
-	 */
+	
+	@Modifying
+	@Query(value ="update diesel_transaction set price = ? where firm = ? and date between ? and ?",  nativeQuery = true)
+	int updateSaleTransactions(BigDecimal price, long firmId, String fromDate, String toDate);
+	
+	@Modifying
+	@Query(value ="update diesel_transaction set price = ? where diesel_dealer = ? and date between ? and ?",  nativeQuery = true)
+	int updatePurchaseTransactions(BigDecimal price, long dieselDealerId, String fromDate, String toDate);
 
 	@Query("SELECT SUM(quantity) FROM DieselTransaction where dealType = 1")
 	Integer getTotalDieselInflow();
