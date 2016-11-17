@@ -1,10 +1,12 @@
 package com.tayaniapp.repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tayaniapp.model.DieselTransaction;
@@ -19,8 +21,8 @@ public interface DieselTransactionRepository extends CrudRepository<DieselTransa
 	DieselTransaction findById(Long l);
 
 	@Modifying
-	@Query("DELETE FROM DieselTransaction")
-	void deleteAll();
+	@Query("DELETE FROM DieselTransaction WHERE id IN (:idList)")
+	int deleteMultiple(@Param("idList") List<Long> idList);
 	
 	@Modifying
 	@Query(value ="update diesel_transaction set price = ? where firm = ? and date between ? and ?",  nativeQuery = true)

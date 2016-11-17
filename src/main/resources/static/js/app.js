@@ -15,7 +15,8 @@ var app = angular
     'ui.bootstrap',
     'angular-loading-bar',
     'toaster',
-    'anguFixedHeaderTable', 'ngBootstrap.dateRangePicker'
+    'anguFixedHeaderTable', 'ngBootstrap.dateRangePicker','ngTable',
+    'underscore'
   ])
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     

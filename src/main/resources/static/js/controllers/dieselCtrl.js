@@ -6,8 +6,8 @@
 angular
 		.module('tayaniApp')
 		.controller(
-				'DieselCtrl', ['$rootScope', '$scope', '$position', '$http', 'dieselService', 'TransportService', 'DieselConfig', 'FirmService', 'DealerService', 'DealTypeService', '$timeout', 'toaster', '$window', '$log', 'APP_CONSTANTS','authService',
-				function($rootScope, $scope, $position, $http, dieselService, TransportService, DieselConfig, FirmService, DealerService, DealTypeService, $timeout, toaster, $window, $log, APP_CONSTANTS, authService) {
+				'DieselCtrl', ['$rootScope', '$scope', '$position', '$http', 'dieselService', 'TransportService', 'DieselConfig', 'FirmService', 'DealerService', 'DealTypeService', '$timeout', 'toaster', '$window', '$log', 'APP_CONSTANTS','authService','NgTableParams','ngTableEventsChannel','_',
+				function($rootScope, $scope, $position, $http, dieselService, TransportService, DieselConfig, FirmService, DealerService, DealTypeService, $timeout, toaster, $window, $log, APP_CONSTANTS, authService,NgTableParams, ngTableEventsChannel,_) {
 
 					$scope.init = function() {
 						$scope.APP_CONSTANTS = APP_CONSTANTS;
@@ -26,8 +26,10 @@ angular
 							dates : {startDate : null, endDate: null}
 						}
 						$scope.dieselTransaction = {};
+						$scope.dieselTransactions = [];
 						$scope.editMode = false;
-						$scope.predicate = 'date';
+						$scope.sortKey = 'date';
+						$scope.reverse = true;
 						$scope.totalDieselInflow = 0;
 						$scope.totalDieselOutflow = 0;
 						$rootScope.dieselInStock = $scope.totalDieselInflow - $scope.totalDieselOutflow;
@@ -37,6 +39,7 @@ angular
 						$scope.vehicles = [];
 						$scope.deaselDealers = [];
 						$scope.activeTab = 0;
+						$scope.selectedRows = [];
 						
 						$scope.ranges = {
 								'Today': [moment(), moment()],
@@ -48,7 +51,7 @@ angular
 						
 						 $scope.dateOptions = {
 								    formatYear: 'yy',
-								    maxDate: null,
+								    maxDate: moment(),
 								    minDate: null,
 								    startingDay: 1
 								  };
@@ -56,7 +59,42 @@ angular
 						 $scope.newTranDatePicker = {
 									isNewTranDatePickerOpen : false
 							}
+						 
+						 $scope.tableParams = new NgTableParams({page:1, count:10},{total: $scope.dieselTransactions.length ,dataset: $scope.dieselTransactions});
+						 $scope.showEditDeleteButton= false;
+						 $scope.genrateRowDetailMessage($scope.tableParams.page(), $scope.tableParams.count(), $scope.tableParams.total());
 					}
+					
+					$scope.genrateRowDetailMessage = function(page, pageSize, total){
+						var fromRow = (total==0) ? 0: (page*pageSize) - (pageSize -1);
+						var toRow = (page*pageSize) <= total ? (page*pageSize) : total;
+						$scope.rowDetailMessage = 'Showing '+ fromRow +' to '+toRow + ' of '+total+ ' entries';
+					}
+					var reloadRowMessage = function(params){
+						$scope.genrateRowDetailMessage(params.page(), params.count(), params.total());
+						$scope.resetRowSelection();
+					}
+					ngTableEventsChannel.onPagesChanged(reloadRowMessage); // listening page change event of table
+					
+					/***** Multiple row selection start **********/
+
+					$scope.setSelectedRow = function(item){
+						var index = $scope.selectedRows.indexOf(item); 
+						if(index == -1){
+							$scope.selectedRows.push(item);
+						}
+						else{
+							$scope.selectedRows.splice(index,1);
+						}
+					}
+					
+					$scope.highlightRow = function(item){
+						if($scope.selectedRows.indexOf(item) > -1)
+							return true;
+						return false;
+					}
+					
+					/**************************Multiple row seleciton end *********/
 					
 					$scope.newTranDatePickerToggle = function($event) {
 				        $event.preventDefault();
@@ -150,7 +188,14 @@ angular
 								.getDieselTransactions(function(status, data) {
 									if (status === 200) {
 										$scope.dieselTransactions = data;
+										$scope.tableParams = new NgTableParams({  page: 1, // show first page
+										        count: 10, // count per page
+										        sorting: {
+										            date: 'dsc' // initial sorting
+										        }
+										    },{ page:1, count:10, counts:[10, 25, 50, 75, 100], dataset: $scope.dieselTransactions});
 										$log.log('Transactions fetched');
+										console.log($scope.tableParams);
 									} else {
 										$scope
 												.setError("Couldn't fetch diesel transactions.");
@@ -341,11 +386,12 @@ angular
 						$scope.resetError();
 						$scope.saveDieselTransaction(dieselTransaction, true);
 						$scope.resetDieselTransactionForm();
+						$scope.resetRowSelection();
 					};
 
-					$scope.editDieselTransaction = function(dieselTransaction) {
+					$scope.editDieselTransaction = function() {
+						var dieselTransaction = $scope.selectedRows[0];
 						$scope.resetError();
-						console.log(dieselTransaction);
 						$scope.dieselTransactionForm.id = dieselTransaction.id;
 						$scope.dieselTransactionForm.dealTypeSelected = dieselTransaction.dealType.type;
 						if ('PURCHASE' === dieselTransaction.dealType.type) {
@@ -360,47 +406,33 @@ angular
 						$scope.dieselTransactionForm.price = dieselTransaction.price;
 						$scope.editMode = true;
 						$scope.activeTab= APP_CONSTANTS.DIESEL_NEW_TRN_TAB;
-						$scope.showAddTransactionPanel();
+						$scope.selectedRows=[];
 					};
 
-					$scope.removeDieselTransaction = function(dieselTransaction) {
+					$scope.removeDieselTransaction = function() {
 						$scope.resetError();
 						$scope.resetDieselTransactionForm();
-						dieselService
-								.removeDieselTransaction(
-										dieselTransaction.id,
-										function(status, data) {
-											if (status === 200
-													&& data === 'true') {
-												$scope
-														.fetchDieselTransactions();
-												$scope.getDieselInflow();
-												toaster
-														.info("Transaction remove success!");
-
-											} else {
-												toaster
-														.error("Couldn't remove transaction!");
-											}
-										});
-					};
-
-					$scope.removeAllDieselTransactions = function() {
-						$scope.resetError();
-						$scope.resetDieselTransactionForm();
-						dieselService.removeAllDieselTransactions(function(
-								status, data) {
-							if (status === 200 && data === 'true') {
-								$scope.dieselTransactions = [];
+						var transactionsIds = [];
+						_.forEach($scope.selectedRows, function(item){
+							transactionsIds.push(item.id);
+						});
+						$scope.selectedRows = [];
+						dieselService.removeDieselTransaction(transactionsIds, function(status, data) {
+							if (status === 200 && data !== 'Error') {
+								$scope.fetchDieselTransactions();
 								$scope.getDieselInflow();
-								toaster.info("Transaction remove success!");
+								toaster.info({
+									toasterId : 1,
+									body : data
+											+ " transactions deleted!"
+								});
 							} else {
-								toaster.error("Couldn't remove transaction!");
+								toaster.error({
+									toasterId : 1,
+									body : " Couldn't delete transaction!"
+								});
 							}
 						});
-						$rootScope.dieselInStock = dieselService
-								.getDieselInStock();
-						$scope.fetchDieselTransactions();
 					};
 
 					/** Update Transaction form start * */
@@ -446,6 +478,11 @@ angular
 						$scope.error = false;
 						$scope.errorMessage = '';
 					};
+					
+					$scope.resetRowSelection = function(){
+						$scope.showEditDeleteButton = false;
+						$scope.dieselRowSelected={};
+					}
 
 					$scope.setError = function(message) {
 						$scope.error = true;
@@ -512,5 +549,13 @@ angular
 				if (items)
 					return items.slice().reverse();
 			};
-		});
-;
+		}).directive('stRatio',function(){
+	        return {
+	            link:function(scope, element, attr){
+	              var ratio=+(attr.stRatio);
+	              
+	              element.css('width',ratio+'%');
+	              
+	            }
+	          };
+	      });

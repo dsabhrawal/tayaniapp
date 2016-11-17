@@ -21,3 +21,8 @@
     border-radius: 32px;
     color: black;
   }
+  .selected {
+    background-color:#0080c0!important;
+    color:white !important;
+    font-weight:bold !important;
+}
