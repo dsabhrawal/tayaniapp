@@ -3,6 +3,7 @@ package com.tayaniapp.controller;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -62,27 +63,21 @@ public class DieselTransactionController {
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public String remove(String transactionId) {
-		logger.info("Diesel Transaction removal request with id: {}", transactionId);
+	public String remove(String transactionIds) {
+
+		List<Long> transacitonIdsLong = new ArrayList<>();
+		String[] ids = transactionIds.split(",");
+		for(String id: ids){
+			transacitonIdsLong.add(Long.valueOf(id));
+		}
+		logger.info("Diesel Transaction removal request received for ids");
+		transacitonIdsLong.stream().forEach((item) -> {logger.info(item.toString());} );
 		try {
-			dieselTransactionDao.delete(Long.valueOf(transactionId));
-			return "true";
+			int rows = dieselTransactionDao.deleteMultiple(transacitonIdsLong);
+			logger.info("{} deleted !", rows);
+			return String.valueOf(rows);
 		} catch (Exception ex) {
 			logger.error("Error in removing diesel transaction : {}", ex.toString());
-			return "Error";
-		}
-	}
-
-	@RequestMapping(value = "/deleteAll", method = RequestMethod.DELETE)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public String removeAll() {
-		logger.info("all Diesel Transaction removal");
-		try {
-			dieselTransactionDao.deleteAll();
-			return "true";
-		} catch (Exception ex) {
-			logger.error("Error in removing diesel transactions : {}", ex.toString());
 			return "Error";
 		}
 	}

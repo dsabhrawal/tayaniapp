@@ -15,7 +15,8 @@ var app = angular
     'ui.bootstrap',
     'angular-loading-bar',
     'toaster',
-    'anguFixedHeaderTable', 'ngBootstrap.dateRangePicker'
+    'anguFixedHeaderTable', 'ngBootstrap.dateRangePicker','ngTable',
+    'underscore','mwl.confirm'
   ])
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     
@@ -340,7 +341,10 @@ var app = angular
   }])
   .constant('APP_CONSTANTS', {
 	  DATE_FORMAT : 'dd MMM yyyy',
-	  INPUT_DATE_FORMAT : 'yyyy-MM-dd'
+	  INPUT_DATE_FORMAT : 'yyyy-MM-dd',
+	  DIESEL_NEW_TRN_TAB : 1,
+	  DIESEL_UPDATE_TRN_TAB : 2,
+	  DIESEL_TRN_DATE_FRMT : 'MM/dd/yyyy'
   })
   .run(function ($rootScope, authService, $window, $templateCache) {
 	

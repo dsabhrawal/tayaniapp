@@ -104,7 +104,6 @@ public class DieselReportsController {
 																													// on
 																													// date
 			dieselFirmSaleFortnightly.stream().forEach((data1) -> {
-				System.out.println(data1);
 			});
 			return dieselFirmSaleFortnightly;
 		} catch (Exception ex) {
