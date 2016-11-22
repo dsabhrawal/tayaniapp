@@ -31,10 +31,10 @@ app.service('dieselService',['$rootScope', 'DieselConfig', '$http', 'APP_CONSTAN
 		});
 	}
 
-	var removeDieselTransaction = function(transactionId, cbResult) {
-
+	var removeDieselTransaction = function(transactionIds, cbResult) {
+		console.log(transactionIds);
 		var queryStringData = {
-			transactionId : transactionId
+				transactionIds : transactionIds
 		};
 		var config = {
 			params : queryStringData,
@@ -49,14 +49,6 @@ app.service('dieselService',['$rootScope', 'DieselConfig', '$http', 'APP_CONSTAN
 		});
 	};
 
-	var removeAllDieselTransactions = function(cbResult) {
-		$http.delete('/rest/api/diesel-transaction/deleteAll').success(function(data, status, headers, config) {
-			cbResult(status, data);
-		}).error(function(data, status, headers, config) {
-			cbResult(status, data);
-		});
-	};
-	
 	var updateDieselTransactions = function(updateTransactionForm, cbResult){
 		
 		var dates = updateTransactionForm.dates.split(' - ');
@@ -104,7 +96,6 @@ app.service('dieselService',['$rootScope', 'DieselConfig', '$http', 'APP_CONSTAN
 		addDieselTransaction : addDieselTransaction,
 		getDieselTransactions : getDieselTransactions,
 		removeDieselTransaction : removeDieselTransaction,
-		removeAllDieselTransactions : removeAllDieselTransactions,
 		getTotalInflow : getTotalInflow,
 		getTotalOutflow : getTotalOutflow,
 		updateDieselTransactions : updateDieselTransactions
