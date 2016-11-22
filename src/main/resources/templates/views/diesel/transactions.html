@@ -397,7 +397,22 @@
 							</table>
 							<div>
 								<button class="btn btn-success" ng-show="selectedRows.length === 1" ng-click="editDieselTransaction()">Edit</button>
+								<button class="btn" ng-show="selectedRows.length > 1" ng-click="resetSelectedRows()">Clear Selection</button>
 								<button class="btn btn-danger" ng-show="selectedRows.length >= 1" ng-click="removeDieselTransaction()">Remove</button>
+								<button
+  class="btn btn-default"
+  mwl-confirm
+  title="{{ title }}"
+  message="{{ message }}"
+  confirm-text="{{ confirmText }}"
+  cancel-text="{{ cancelText }}"
+  placement="{{ placement }}"
+  on-confirm="confirmClicked = true"
+  on-cancel="cancelClicked = true"
+  confirm-button-type="danger"
+  cancel-button-type="default">
+  Click me!
+</button>
 							</div>
 						</div>
 						

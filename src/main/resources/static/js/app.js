@@ -16,7 +16,7 @@ var app = angular
     'angular-loading-bar',
     'toaster',
     'anguFixedHeaderTable', 'ngBootstrap.dateRangePicker','ngTable',
-    'underscore'
+    'underscore','mwl.confirm'
   ])
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     

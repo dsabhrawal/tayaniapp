@@ -94,6 +94,9 @@ angular
 						return false;
 					}
 					
+					$scope.resetSelectedRows = function(){
+						$scope.selectedRows = [];
+					}
 					/**************************Multiple row seleciton end *********/
 					
 					$scope.newTranDatePickerToggle = function($event) {
