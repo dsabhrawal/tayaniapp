@@ -173,11 +173,9 @@ angular
 								});
 					}
 					$scope.getAllTransport = function() {
-						TransportService
-								.getVehicleData(function(status, data) {
+						TransportService.getVehicleData(function(status, data) {
 									if (status === 200) {
-										console
-												.log("Vehicles data successfully fetched.");
+										console.log("Vehicles data successfully fetched.");
 										$scope.vehicles = data
 									} else {
 										toaster.error("Couldn't get Data!");
@@ -187,8 +185,7 @@ angular
 
 					$scope.fetchDieselTransactions = function() {
 
-						dieselService
-								.getDieselTransactions(function(status, data) {
+						dieselService.getDieselTransactions(function(status, data) {
 									if (status === 200) {
 										$scope.dieselTransactions = data;
 										$scope.tableParams = new NgTableParams({  page: 1, // show first page
@@ -200,8 +197,7 @@ angular
 										$log.log('Transactions fetched');
 										console.log($scope.tableParams);
 									} else {
-										$scope
-												.setError("Couldn't fetch diesel transactions.");
+										$scope.setError("Couldn't fetch diesel transactions.");
 									}
 								});
 					};

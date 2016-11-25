@@ -56,7 +56,7 @@
 									ng-model="dieselSaleReportForm.selectedVehicle"
 									ng-change="generateDieselSaleFortnightlyReport(dieselSaleReportForm.selectedVehicle, 'VEHICLE')">
 									<option
-										ng-repeat="vehicle in vehicles | filter:{firm : dieselSaleReportForm.selectedFirm}">{{vehicle.vehicleNumber}}</option>
+										ng-repeat="vehicle in vehicles | filter:dieselSaleReportForm.selectedFirm">{{vehicle.vehicleNumber}}</option>
 								</select>
 							</div>
 						</div>
